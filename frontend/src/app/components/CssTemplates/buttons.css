@@ -1,0 +1,41 @@
+.baseButton {
+  background-color: #000000;
+  border: none;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  margin: 4px 2px;
+  border-radius: 10px;
+}
+
+.onEnabled {
+  background-color: #50C878;
+  color: black;
+}
+
+.offEnabled {
+  background-color: #8B0000;
+  color: white;
+}
+
+.automaticSwitch {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.65;
+  filter: alpha(opacity=65);
+}
+
+.automatic {
+  background-color: #000066;
+  filter: alpha(opacity=80);
+  color: white;
+}
+
+.manual {
+  background-color: #404040;
+  filter: alpha(opacity=80);
+  color: white;
+}

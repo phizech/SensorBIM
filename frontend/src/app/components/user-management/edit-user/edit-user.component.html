@@ -1,0 +1,130 @@
+<div class="text" id="edit-container">
+  <form *ngIf="this.form" [formGroup]="this.form" id="form">
+    <div class="form-group">
+      <br><br>
+      <h4>{{'button.user.edit.editUser' | translate}}</h4> <br>
+      <input
+        class="form-control"
+        formControlName="username"
+        id="username"
+        placeholder="{{'button.user.username' | translate}}"
+        type="text">
+      <div *ngIf="form.get('username').invalid" class="alert alert-danger">
+        <div *ngIf="form.get('username').errors.required">{{'button.user.create.usernameRequired' | translate}}</div>
+        <div *ngIf="form.get('username').errors.minLength">{{'button.user.create.minLenUsername' | translate}}</div>
+      </div>
+      <input
+        class="form-control"
+        formControlName="email"
+        id="email"
+        placeholder="{{'button.user.email' | translate}}"
+        type="text">
+      <div *ngIf="form.get('email').invalid" class="alert alert-danger">
+        <div *ngIf="form.get('email').errors.required">{{'button.user.create.emailRequired' | translate}}</div>
+        <div *ngIf="form.get('email').errors.email">{{'button.user.create.invalidEmail' | translate}}</div>
+      </div>
+      <input
+        class="form-control"
+        formControlName="firstName"
+        id="firstName"
+        placeholder="{{'button.user.firstName' | translate}}"
+        type="text">
+      <div *ngIf="form.get('firstName').invalid" class="alert alert-danger">
+        <div *ngIf="form.get('firstName').errors.required">{{'button.user.create.firstNameRequired' | translate}}.</div>
+      </div>
+      <input
+        class="form-control"
+        formControlName="lastName"
+        id="lastName"
+        placeholder="{{'button.user.lastName' | translate}}"
+        type="text">
+      <div *ngIf="form.get('lastName').invalid" class="alert alert-danger">
+        <div *ngIf="form.get('lastName').errors.required">{{'button.user.create.lastNameRequired' | translate}}.</div>
+      </div>
+    </div>
+    <select *ngIf="!ownProfile && user.userRole !== 'ADMIN'" [(ngModel)]="allRoles[1]" class="form-control"
+            formControlName="userRole" id="userRole" onchange="">
+      <option *ngFor="let role of allRoles"
+              [ngValue]="role">{{role[1] | translate }}</option>
+    </select>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-dismiss="modal" routerLink="/userManagement"
+              type="button">{{'button.common.back' | translate}}</button>
+      <button (click)="updatePassword()" class="btn btn-primary" data-toggle="modal"
+              type="button">{{'button.user.edit.changePassword' | translate}}
+      </button>
+      <button (click)="save()" class="btn btn-primary" type="submit">{{'button.common.save' | translate}}
+      </button>
+    </div>
+  </form>
+
+  <div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="resetPasswordByMail"
+       role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">{{'button.common.confirmation' | translate}}</h5>
+          <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {{'button.user.edit.changePasswordConfirmation' | translate}}
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-dismiss="modal"
+                  type="button">{{'button.common.No' | translate}}</button>
+          <button (click)="sendEmailWithNewPassword()" class="delete btn btn-primary" data-dismiss="modal"
+                  type="button">{{'button.common.yes' | translate}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="resetPasswordEntering"
+       role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">{{'button.user.edit.changePassword' | translate }}</h5>
+          <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form *ngIf="this.changePasswordForm" [formGroup]="this.changePasswordForm" id="changePasswordForm">
+            <input
+              class="form-control"
+              formControlName="password"
+              id="password"
+              placeholder="{{'button.user.edit.oldPassword' | translate }}"
+              type="password">
+            <br>
+            <input
+              class="form-control"
+              formControlName="newPassword"
+              id="newPassword"
+              placeholder="{{'button.user.edit.newPassword' | translate }}"
+              type="password">
+            <br>
+            <input
+              class="form-control"
+              formControlName="repeatedPassword"
+              id="repeatedPassword"
+              placeholder="{{'button.user.edit.repeatedPassword' | translate }}"
+              type="password">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-dismiss="modal"
+                  type="button">{{'button.common.No' | translate}}</button>
+          <button (click)="resetPassword()" [disabled]="changePasswordForm.invalid" class="delete btn btn-primary"
+                  type="button">{{'button.common.save' | translate}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,63 @@
+<div class="text">
+  <form *ngIf="this.form" [formGroup]="this.form">
+    <div class="form-group">
+      <br><br>
+      <h4>{{'button.building.building' | translate }}</h4>
+      <input
+        class="form-control"
+        formControlName="buildingName"
+        id="buildingName"
+        placeholder="{{'button.building.entity.buildingName' | translate }}"
+        type="text">
+      <div *ngIf="form.get('buildingName').touched && form.get('buildingName').invalid" class="alert alert-danger">
+        <div
+          *ngIf="form.get('buildingName').errors.required">{{ 'button.building.entity.buildingNameRequired' | translate }}</div>
+        <div
+          *ngIf="form.get('buildingName').errors.minLength">{{ 'button.building.entity.buildingNameMinLen' | translate }}</div>
+      </div>
+      <h4>{{ 'button.building.influxAccess' | translate }}</h4>
+      <input
+        class="form-control"
+        formControlName="influxDatabaseUrl"
+        id="influxDatabaseUrl"
+        placeholder="{{ 'button.building.entity.url' | translate }}"
+        type="text">
+      <div *ngIf="form.get('influxDatabaseUrl').touched && form.get('influxDatabaseUrl').invalid"
+           class="alert alert-danger">
+        <div
+          *ngIf="form.get('influxDatabaseUrl').errors.required">{{ 'button.building.entity.urlRequired' | translate }}</div>
+      </div>
+      <input
+        class="form-control"
+        formControlName="organizationName"
+        id="organizationName"
+        placeholder="{{ 'button.building.entity.organizationName' | translate }}"
+        type="text">
+      <div *ngIf="form.get('organizationName').touched && form.get('organizationName').invalid"
+           class="alert alert-danger">
+        <div
+          *ngIf="form.get('organizationName').errors.required">{{ 'button.building.entity.organizationNameRequired' | translate }}</div>
+      </div>
+      <input
+        class="form-control"
+        formControlName="influxDBToken"
+        id="influxDBToken"
+        placeholder="{{ 'button.building.entity.token' | translate }}"
+        type="text">
+      <div *ngIf="form.get('influxDBToken').touched && form.get('influxDBToken').invalid" class="alert alert-danger">
+        <div
+          *ngIf="form.get('influxDBToken').errors.required">{{ 'button.building.entity.tokenRequired' | translate }}</div>
+      </div>
+    </div>
+    <p><b>{{ 'button.common.important' | translate }}</b></p>
+    <p>{{'button.building.create.bucketMsg' | translate }}</p>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-dismiss="modal" routerLink="/myBuildings"
+              type="button">{{'button.common.back' | translate}}</button>
+      <button (click)="save()" [disabled]="form.invalid" class="btn btn-primary"
+              type="submit">{{'button.common.save' | translate}}
+      </button>
+    </div>
+  </form>
+</div>

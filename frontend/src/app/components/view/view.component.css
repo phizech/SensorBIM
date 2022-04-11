@@ -1,0 +1,29 @@
+select {
+  background-color: transparent;
+  border: none;
+  padding: 0 1em 0 0;
+  margin: 0;
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: inherit;
+  line-height: inherit;
+}
+
+.selecting {
+  display: grid;
+  align-items: center;
+  position: relative;
+}
+
+.selections {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding-left: 10px;
+}
+
+.selectButtons {
+  width: 100px;
+  margin: 0 auto;
+}

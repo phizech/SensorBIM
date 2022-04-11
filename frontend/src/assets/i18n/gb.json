@@ -1,0 +1,198 @@
+{
+  "Admin": "Admin",
+  "Benutzer": "User",
+  "basicErrorMessage": "An error occurred!",
+  "building": {
+    "deleting": {
+      "failure": "The building could not be deleted!",
+      "success": "Deleted building successfully!"
+    },
+    "saving": {
+      "failure": "Saving the building failed!",
+      "nameTaken": "The building name is already taken!",
+      "success": "Saving building was successful!",
+      "wrongURL": "The URL is invalid, it could not be reached!"
+    },
+    "update": {
+      "failure": "The building could not be updated!",
+      "success": "The building was successfully updated!"
+    }
+  },
+  "switchingDevice": {
+    "confirmChangeStatus": "Are you sure you want to change the status of the switching device?",
+    "confirmAutomatic": "Are you sure you want to control the device manually?",
+    "GettingStatus": "Devices are loading and status is queried. . .",
+    "Manual": "Manual",
+    "Automatic": "Automatic",
+    "LastChanged": "Last Changed",
+    "OnOff": "ON/OFF",
+    "GetInformation": "Information"
+  },
+  "button": {
+    "auth": {
+      "forgotPW?": "Password forgotten?",
+      "login": "Login",
+      "registerMsg": "New here? Create an account!"
+    },
+    "building": {
+      "building": "Building",
+      "create": {
+        "attentionIfc": "Please consider only IFC files can be uploaded",
+        "bucketMsg": "The token must have read permissions on the buckets,\nin which the measured values are stored",
+        "fileUploaded": "File uploaded",
+        "importantMsg": "The token must have read rights to the buckets,<br>\nin which the measured values are stored",
+        "uploadHere": "Upload the IFC file here",
+        "uploading": "Checking and uploading..."
+      },
+      "createBuilding": "Create new building",
+      "delete": "delete building",
+      "deleteBuildingMessage": "Are you sure you want to take delete the building? This process cannot be undone.",
+      "edit": "edit building",
+      "entity": {
+        "buildingName": "Building name",
+        "buildingNameMinLen": "The minimum length of the building name is 5 characters",
+        "buildingNameRequired": "Name of the building is required",
+        "organizationName": "Organization Name",
+        "organizationNameRequired": "The name of the organization is required",
+        "token": "InfluxDB token",
+        "tokenRequired": "The influxDB token is required",
+        "url": "URL",
+        "urlRequired": "The URL is required"
+      },
+      "id": "Id",
+      "influxAccess": "InfluxDB Access",
+      "levels": "Levels",
+      "name": "Name",
+      "overview": "Overview",
+      "uploadIfc": "Upload IFC file",
+      "view": "2D view",
+      "devices": "Switching Devices"
+    },
+    "common": {
+      "No": "No",
+      "back": "Back",
+      "closeWindow": "Close",
+      "confirmation": "Confirmation",
+      "delete": "Delete",
+      "important": "Important!",
+      "save": "Save",
+      "user": "User",
+      "yes": "Yes"
+    },
+    "navbar": {
+      "adminManagement": "Admin Management",
+      "allBuildings": "All Buildings",
+      "buildingOverview": "Building Overview",
+      "logout": "Logout",
+      "myBuildings": "My buildings",
+      "ownProfile": "Own Profile",
+      "user": "User",
+      "userOverview": "User Overview"
+    },
+    "sensor": {
+      "Download": "Download",
+      "analysis": "Analysis",
+      "average": "Average",
+      "control": "Control",
+      "max": "Max Value",
+      "min": "Min Value",
+      "overview": "Overview",
+      "time": "Time",
+      "value": "Value"
+    },
+    "device": {
+      "name": "Name",
+      "onoff": "On/Off",
+      "status": "Status"
+    },
+    "user": {
+      "create": {
+        "emailRequired": "The email address is required!",
+        "firstNameRequired": "The first name is required!",
+        "invalidEmail": "Invalid email address",
+        "lastNameRequired": "The last name is required!",
+        "minLenUsername": "The minimum length of the username is 5 characters",
+        "password": "Password",
+        "passwordRequired": "The password is required!",
+        "register": "Register",
+        "repeatedPassword": "Repeat password",
+        "usernameRequired": "A username is required!"
+      },
+      "createNewUser": "Create new user",
+      "deleteUserMsg": "Are you sure you want to delete the user? This process cannot be undone.",
+      "edit": {
+        "changePassword": "Change Password",
+        "changePasswordConfirmation": "Are you sure you want to reset the password of this user? An email with a new password will be sent to his email address.",
+        "editUser": "Edit user",
+        "newPassword": "New password",
+        "oldPassword": "Old password",
+        "repeatedPassword": "Repeated Password"
+      },
+      "email": "Email address",
+      "firstName": "First name",
+      "id": "Id",
+      "lastName": "Last name",
+      "overview": "Overview",
+      "resetPassword": "Reset password",
+      "role": "Role",
+      "username": "Username"
+    }
+  },
+  "influx": {
+    "connection": {
+      "failed": "Connecting to influxDB failed!"
+    }
+  },
+  "login": {
+    "serverConFailed": "The server could not be accessed!",
+    "success": "Login successful!",
+    "wrongPW": "Wrong password/username!"
+  },
+  "upload": {
+    "building": {
+      "noRooms": "The uploaded file does not contain any rooms. Please check if all the parameters where exported from Revit!",
+      "noSensors": "The building does not contain any (in InflxuDB available) sensors!",
+      "noStoreys": "The building does not contain any levels!"
+    },
+    "failed": "The conversion of the file failed.",
+    "file": {
+      "convertingFailed": "The file could not be converted!",
+      "invalidTurtle": "The file is not a valid turtle file!",
+      "noIFC": "The selected file is not an IFC file!",
+      "successful": "The file was successfully uploaded!"
+    },
+    "success": "The file was successfully converted!"
+  },
+  "user": {
+    "delete": {
+      "failed": "The user could not be deleted!",
+      "success": "Deleted the user successfully!"
+    },
+    "email": {
+      "alreadyExists": "A user with this email address already exists!",
+      "invalid": "The email is invalid!",
+      "sendEmail": {
+        "Failure": "The email could not be sent!",
+        "Success": "Email successfully sent!"
+      }
+    },
+    "loadUserFailed": "Loading the user failed!",
+    "password": {
+      "NewRepeatedNotMatching": "The new and the repeated passwords do not match!",
+      "OldInvalid": "The old password is invalid!",
+      "OldNewMatch": "The old and the new passwords match!",
+      "createRepeatedWrong": "The passwords do not match!",
+      "invalid": "The password is incorrect!",
+      "savingError": "Could not reset the password!",
+      "savingFailed": "Saving the password failed!",
+      "savingSuccess": "Resetting the password was successful!"
+    },
+    "savingFailed": "The user could not be saved!",
+    "savingSuccess": "The user was successfully saved!",
+    "updateFailed": "The user could not be updated!",
+    "updateSuccess": "The user was successfully updated!",
+    "username": {
+      "taken": "The username is already taken!"
+    }
+  }
+}

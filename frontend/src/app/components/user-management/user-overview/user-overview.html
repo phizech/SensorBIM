@@ -1,0 +1,82 @@
+<div class="container" id="userOverview">
+  <div class="table-responsive">
+    <div class="table-wrapper">
+
+      <div class="table-title">
+        <div class="navbar navbar-expand-lg">
+          <div class="container-fluid navbar-nav">
+            <a class="navbar-brand custom-nav-header">{{'button.navbar.userOverview' | translate}}</a>
+            <button mat-raised-button routerLink="/addUser"
+                    style="float: right; color: white; background-color: black;">
+              <mat-icon>add</mat-icon>
+              {{'button.user.createNewUser' | translate}}
+            </button>
+          </div>
+        </div>
+      </div>
+      <table [dataSource]="dataSource" class="table table-striped table-hover" mat-table matSort>
+        <ng-container matColumnDef="id">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>{{'button.user.id' | translate}}</th>
+          <td *matCellDef="let user" mat-cell>{{user.id}}</td>
+        </ng-container>
+        <ng-container matColumnDef="username">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>{{'button.user.username' | translate}}</th>
+          <td *matCellDef="let user" mat-cell>{{user.username}}</td>
+        </ng-container>
+        <ng-container matColumnDef="firstName">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>{{'button.user.firstName' | translate}}</th>
+          <td *matCellDef="let user" mat-cell>{{user.firstName}}</td>
+        </ng-container>
+        <ng-container matColumnDef="lastName">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>{{'button.user.lastName' | translate}}</th>
+          <td *matCellDef="let user" mat-cell>{{user.lastName}}</td>
+        </ng-container>
+        <ng-container matColumnDef="userRole">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>{{'button.user.role' | translate}}</th>
+          <td *matCellDef="let user" mat-cell>{{getRole(this.user.userRole)}}</td>
+        </ng-container>
+        <ng-container matColumnDef="icons">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header></th>
+          <td *matCellDef="let user" mat-cell>
+            <a *ngIf="user.id!=currentUserId()" [routerLink]="['/editUser/', user.id]" class="edit"
+               data-toggle="tooltip" title="Edit"><i
+              class="material-icons">edit</i></a>
+            <a (click)="setSelectedUser(user)" *ngIf="user.id!=currentUserId()" class="delete clickabel-a"
+               data-target="#exampleModalCenter"
+               data-toggle="modal" title="{{'button.common.delete' | translate}}"><i class="material-icons">&#xE5C9;</i></a>
+          </td>
+        </ng-container>
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+      </table>
+      <mat-paginator
+        [pageSize]="5" hidePageSize="true">
+      </mat-paginator>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="exampleModalCenter"
+     role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">{{'button.common.confirmation' | translate}}</h5>
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{'button.user.deleteUserMsg' | translate}}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal"
+                type="button">{{'button.common.closeWindow' | translate}}</button>
+        <button (click)="clickMethod()" class="delete btn btn-primary" data-dismiss="modal"
+                type="button">{{'button.common.delete' | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

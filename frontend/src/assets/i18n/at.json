@@ -1,0 +1,198 @@
+{
+  "Admin": "Administrator",
+  "Benutzer": "Benutzer",
+  "basicErrorMessage": "Ein Fehler ist aufgetreten!",
+  "building": {
+    "deleting": {
+      "failure": "Das Gebäude konnte nicht gelöscht werden!",
+      "success": "Gebäude erfolgreich gelöscht!"
+    },
+    "saving": {
+      "failure": "Das Speichern des Gebäudes ist fehlgeschlagen!",
+      "nameTaken": "Der Gebäudename ist bereits vergeben!",
+      "success": "Das Speichern des Gebäudes war erfolgreich!",
+      "wrongURL": "Die URL ist ungültig, sie konnte nicht erreicht werden!"
+    },
+    "update": {
+      "failure": "Das Gebäude konnte nicht aktualisiert werden!",
+      "success": "Das Gebäude wurde erfolgreich aktualisiert!"
+    }
+  },
+  "switchingDevice": {
+    "confirmChangeStatus": "Sind sie sicher, dass Sie den Status dieses Geräts ändern wollen?",
+    "confirmAutomatic": "Sind sie sicher, dass Sie in Zukunft das Gerät manuell steuern wollen?",
+    "GettingStatus": "Geräte werden geladen und Status wird abgefragt...",
+    "Manual": "Manuell",
+    "Automatic": "Automatisch",
+    "LastChanged": "Letzte Änderung",
+    "OnOff": "Ein/Aus",
+    "GetInformation": "Information"
+  },
+  "button": {
+    "auth": {
+      "forgotPW?": "Passwort vergessen?",
+      "login": "Login",
+      "registerMsg": "Neu hier? Erstelle einen Account!"
+    },
+    "building": {
+      "building": "Gebäude",
+      "create": {
+        "attentionIfc": "Bitte beachten, dass nur IFC-Dateien hochgeladen werden können",
+        "bucketMsg": "Der Token muss Leserechte auf die Buckets haben,\nin welchen die Messwerte gespeichert sind",
+        "fileUploaded": "Datei hochgeladen",
+        "importantMsg": "Der Token muss Leserechte auf die Buckets haben,<br>\nin welchen die Messwerte gespeichert sind",
+        "uploadHere": "Hiere die IFC-Datei hochladen",
+        "uploading": "Überprüfung..."
+      },
+      "createBuilding": "Neues Gebäude erstellen",
+      "delete": "Gebäude löschen",
+      "deleteBuildingMessage": "Sind Sie sicher, dass Sie das Gebäude löschen wollen? Dieser Vorgang kann nicht rückgängig gemacht werden.",
+      "edit": "Gebäude bearbeiten",
+      "entity": {
+        "buildingName": "Gebäudename",
+        "buildingNameMinLen": "Die Mindestlänge des Gebäudenamens beträgt 5 Zeichen",
+        "buildingNameRequired": "Der Name des Gebäudes ist erforderlich",
+        "organizationName": "Name der Organisation",
+        "organizationNameRequired": "Der Name der Organisation ist erforderlich",
+        "token": "InfluxDB-Token",
+        "tokenRequired": "Das influxDB-Token ist erforderlich",
+        "url": "Url",
+        "urlRequired": "Die URL ist erforderlich"
+      },
+      "id": "ID",
+      "influxAccess": "InfluxDB Zugangsdaten",
+      "levels": "Stockwerke",
+      "name": "Name",
+      "overview": "Gebäudeübersicht",
+      "uploadIfc": "IFC-Datei hochladen",
+      "view": "2D-Ansicht",
+      "devices": "Steuergeräte"
+    },
+    "common": {
+      "No": "Nein",
+      "back": "Zurück",
+      "closeWindow": "Schließen",
+      "confirmation": "Bestätigung",
+      "delete": "Löschen",
+      "important": "Wichtig!",
+      "save": "Speichern",
+      "user": "Benutzer",
+      "yes": "Ja"
+    },
+    "navbar": {
+      "adminManagement": "Admin Management",
+      "allBuildings": "Alle Gebäude",
+      "buildingOverview": "Gebäudeübersicht",
+      "logout": "Ausloggen",
+      "myBuildings": "Meine Gebäude",
+      "ownProfile": "Eigenes Profil",
+      "user": "Nutzer",
+      "userOverview": "Benutzerübersicht"
+    },
+    "sensor": {
+      "Download": "Herunterladen",
+      "analysis": "Analyse",
+      "average": "Durchschnittlich",
+      "control": "Steuerung",
+      "max": "Maximalwert",
+      "min": "Min. Wert",
+      "overview": "Überblick",
+      "time": "Zeit",
+      "value": "Wert"
+    },
+    "device": {
+      "name": "Name",
+      "onoff": "Ein/Aus",
+      "status": "Status"
+    },
+    "user": {
+      "create": {
+        "emailRequired": "Die E-Mail-Adresse ist erforderlich!",
+        "firstNameRequired": "Der Vorname ist erforderlich!",
+        "invalidEmail": "ungültige E-Mail-Adresse",
+        "lastNameRequired": "Der Nachname ist erforderlich!",
+        "minLenUsername": "Die Mindestlänge des Benutzernamens beträgt 5 Zeichen",
+        "password": "Passwort",
+        "passwordRequired": "Das Passwort ist erforderlich!",
+        "register": "Registrieren",
+        "repeatedPassword": "Passwort wiederholen",
+        "usernameRequired": "Ein Benutzername ist erforderlich!"
+      },
+      "createNewUser": "Neuen Benutzer erstellen",
+      "deleteUserMsg": "Sind Sie sicher, dass Sie den Benutzer löschen wollen? Dieser Vorgang kann nicht mehr rückgängig gemacht werden.",
+      "edit": {
+        "changePassword": "Password ändern",
+        "changePasswordConfirmation": "Möchten Sie das Passwort dieses Benutzers wirklich zurücksetzen? Eine E-Mail mit einem neuen Passwort wird an seine E-Mail-Adresse gesendet.",
+        "editUser": "Benutzer bearbeiten",
+        "newPassword": "Neues Kennwort",
+        "oldPassword": "Altes Passwort",
+        "repeatedPassword": "Wiederholtes Passwort"
+      },
+      "email": "E-Mail-Addresse",
+      "firstName": "Vorname",
+      "id": "Id",
+      "lastName": "Nachname",
+      "overview": "Überblick",
+      "resetPassword": "Passwort zurücksetzen",
+      "role": "Rolle",
+      "username": "Nutzername"
+    }
+  },
+  "influx": {
+    "connection": {
+      "failed": "Die Verbindung zu influxDB konnte nicht aufgebaut werden!"
+    }
+  },
+  "login": {
+    "serverConFailed": "Die Verbindung zum Server konnte nicht aufgebaut werden!",
+    "success": "Login erfolgreich!",
+    "wrongPW": "Falsches Passwort/Benutzername!"
+  },
+  "upload": {
+    "building": {
+      "noRooms": "Die hochgeladene Datei beinhaltet keine Räume. Versichern Sie sich, dass die IFC-Datei inklusive Geometrie exportiert wurde.",
+      "noSensors": "Das Gebäude enthält keine (in InflxuDB vorhandenden) Sensoren!",
+      "noStoreys": "Das Gebäude enthält keine Stockwerke!"
+    },
+    "failed": "Die Konvertierung der Datei ist fehlgeschlagen.",
+    "file": {
+      "convertingFailed": "Die Datei konnte nicht konvertiert werden!",
+      "invalidTurtle": "Die Datei ist keine gültige Turtle-Datei!",
+      "noIFC": "Die ausgewählte Datei ist keine IFC-Datei!",
+      "successful": "Die Datei wurde erfolgreich hochgeladen!"
+    },
+    "success": "Die Datei wurde erfolgreich konvertiert!"
+  },
+  "user": {
+    "delete": {
+      "failed": "Der Benutzer konnte nicht gelöscht werden!",
+      "success": "Benutzer erfolgreich gelöscht!"
+    },
+    "email": {
+      "alreadyExists": "Ein Benutzer mit dieser E-Mail-Adresse existiert bereits!",
+      "invalid": "Die E-Mail ist ungültig!",
+      "sendEmail": {
+        "Failure": "Die E-Mail konnte nicht versendet werden!",
+        "Success": "E-Mail erfolgreich versendet!"
+      }
+    },
+    "loadUserFailed": "Laden des Benutzers fehlgeschlagen!",
+    "password": {
+      "NewRepeatedNotMatching": "Das neue und das wiederholte Passwort stimmen nicht überein!",
+      "OldInvalid": "Das alte Passwort ist ungültig!",
+      "OldNewMatch": "Das alte und das neue Passwort stimmen überein!",
+      "createRepeatedWrong": "Die Passwörter stimmen nicht überein!",
+      "invalid": "Das Passwort ist inkorrekt!",
+      "savingError": "Das Passwort konnte nicht zurückgesetzt werden!",
+      "savingFailed": "Speichern des Passworts fehlgeschlagen!",
+      "savingSuccess": "Das Passwort wurde erfolgreich zurückgesetzt!"
+    },
+    "savingFailed": "Der Benutzer konnte nicht gespeichert werden!",
+    "savingSuccess": "Der Benutzer wurde erfolgreich gespeichert!",
+    "updateFailed": "Der Benutzer konnte nicht aktualisiert werden!",
+    "updateSuccess": "Der Benutzer wurde erfolgreich aktualisiert!",
+    "username": {
+      "taken": "Der Benutzername ist bereits vergeben!"
+    }
+  }
+}

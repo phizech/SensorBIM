@@ -1,0 +1,75 @@
+<div class="text">
+  <form [formGroup]="form">
+    <div class="form-group">
+      <br><br>
+      <h4>{{'button.user.create.register' | translate}}</h4> <br>
+      <input
+        class="form-control"
+        formControlName="username"
+        id="username"
+        placeholder=" {{'button.user.username' | translate}}"
+        type="text">
+      <div *ngIf="form.get('username').touched && form.get('username').invalid" class="alert alert-danger">
+        <div *ngIf="form.get('username').errors.required">{{'button.user.create.usernameRequired' | translate}}</div>
+        <div *ngIf="form.get('username').errors.minLength">{{'button.user.create.minLenUsername' | translate}}</div>
+      </div>
+      <input
+        class="form-control"
+        formControlName="email"
+        id="email"
+        placeholder="{{'button.user.email' | translate}}"
+        type="text">
+      <div *ngIf="form.get('email').touched && form.get('email').invalid" class="alert alert-danger">
+        <div *ngIf="form.get('email').errors.required">{{'button.user.create.emailRequired' | translate}}</div>
+      </div>
+      <input
+        class="form-control"
+        formControlName="firstName"
+        id="firstName"
+        placeholder="{{'button.user.firstName' | translate}}"
+        type="text">
+      <div *ngIf="form.get('firstName').touched && form.get('firstName').invalid" class="alert alert-danger">
+        <div *ngIf="form.get('firstName').errors.required">{{'button.user.create.firstNameRequired' | translate}}.</div>
+      </div>
+      <input
+        class="form-control"
+        formControlName="lastName"
+        id="lastName"
+        placeholder="{{'button.user.lastName' | translate}}"
+        type="text">
+      <div *ngIf="form.get('lastName').touched && form.get('lastName').invalid" class="alert alert-danger">
+        <div *ngIf="form.get('lastName').errors.required">{{'button.user.create.lastNameRequired' | translate}}.</div>
+      </div>
+      <input
+        class="form-control"
+        formControlName="password"
+        id="password"
+        placeholder="{{'button.user.create.password' | translate}}"
+        type="password">
+      <div *ngIf="form.get('password').touched && form.get('password').invalid" class="alert alert-danger">
+        <div *ngIf="form.get('password').errors.required">{{'button.user.create.passwordRequired' | translate}}</div>
+      </div>
+      <br>
+      <input
+        class="form-control"
+        formControlName="repeatedPassword"
+        id="repeatedPassword"
+        placeholder="{{'button.user.create.repeatedPassword' | translate}}"
+        type="password">
+      <div *ngIf="form.get('repeatedPassword').touched && form.get('repeatedPassword').invalid"
+           class="alert alert-danger">
+        <div
+          *ngIf="form.get('repeatedPassword').errors.required">{{'button.user.create.passwordRequired' | translate}}</div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-dismiss="modal" routerLink="/userManagement"
+              type="button">{{'button.common.back' | translate}}</button>
+      <button (click)="save(username, lastName, firstName, email, password, repeatedPassword)" [disabled]="form.invalid"
+              class="btn btn-primary"
+              type="submit">{{'button.common.save' | translate}}
+      </button>
+    </div>
+  </form>
+</div>

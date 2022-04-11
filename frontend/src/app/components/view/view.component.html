@@ -1,0 +1,24 @@
+<div class="item">
+  <div class="navbar navbar-expand-lg">
+
+    <div class="selections">
+      <select (change)="onChange()" [(ngModel)]="selectedLevel" onchange="">
+        <option *ngFor="let level of levels" [ngValue]="level">{{level.name}}</option>
+      </select>
+    </div>
+    <div class="selections">
+      <select (change)="switchType(selectedSensorType)" [(ngModel)]="selectedSensorType" onchange="">
+        <option *ngFor="let selectedSensorType of allSensorTypes"
+                [ngValue]="selectedSensorType">{{selectedSensorType}}</option>
+      </select>
+    </div>
+  </div>
+  <ng-plan (clickedCanvas)="canvasClick()"
+           (clickedRoom)="roomClick($event)"
+           [data]="data"
+           [selected]="selectedSpaces"
+           style="font-size: 0.01px;"
+           toolbar="true">
+  </ng-plan>
+</div>
+

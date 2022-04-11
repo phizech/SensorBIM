@@ -1,0 +1,95 @@
+<div class="container" id="main-container">
+  <div class="table-responsive">
+    <div class="table-wrapper">
+
+      <div class="table-title">
+        <div class="navbar navbar-expand-lg">
+          <div class="container-fluid">
+            <a class="navbar-brand custom-nav-header">{{'button.sensor.overview' | translate}}</a>
+            <button (click)="navigateToControl()" [disabled]="selectedMode === 'control'"
+                    class="whiteButton"
+                    mat-raised-button
+            >
+              <mat-icon [ngStyle]="{'color':'white'}">device_hub</mat-icon>
+              {{'button.sensor.control' | translate}}
+            </button>
+            <button (click)="showSelectedMode('analysis')" [disabled]="selectedMode === 'analysis'"
+                    class="nav-link customButton whiteButton"
+                    mat-raised-button>
+              <mat-icon>insert_chart</mat-icon>
+              {{'button.sensor.analysis' | translate}}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="analysis">
+        <button
+          (click)="switchType(btn)"
+          *ngFor="let btn of sensorTypesInRoom" [disabled]="btn == selectedSensorType"
+          mat-raised-button
+          style="float: left; background-color: white;">
+          {{btn}}
+        </button>
+        <div class="mat-button" style="float:right">
+          <form (change)="onDate()">
+            <input [(ngModel)]="date" class="mat-button" id="start" max={{today}}
+                   min="2021-01-01" name="trip-start"
+                   style="float:right; border-radius:15px; "
+                   type="date" value="2021-10-10">
+          </form>
+        </div>
+
+        <ng-container>
+          <table *ngIf="avgMeasurement != null" class="table table-striped table-hover">
+            <thead>
+            <tr>
+              <th class="w-25"></th>
+              <th class="w-25" scope="col">{{'button.sensor.time' | translate}}</th>
+              <th class="w-25" scope="col">{{'button.sensor.value' | translate}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td class="w-25"><h2>{{'button.sensor.average' | translate}}</h2></td>
+              <td class="w-25"><h2></h2></td>
+              <td class="w-25"><h2>{{avgMeasurement.value}} {{minMeasurement.unit}}</h2></td>
+            </tr>
+            <tr>
+              <td class="w-25"><h2>{{'button.sensor.min' | translate}}</h2></td>
+              <td class="w-25"><h2>{{minMeasurement.time}}</h2></td>
+              <td class="w-25"><h2>{{minMeasurement.value}} {{minMeasurement.unit}}</h2></td>
+            </tr>
+            <tr>
+              <td class="w-25"><h2>{{'button.sensor.max' | translate}}</h2></td>
+              <td class="w-25"><h2>{{maxMeasurement.time}}</h2></td>
+              <td class="w-25"><h2>{{maxMeasurement.value}} {{maxMeasurement.unit}}</h2></td>
+            </tr>
+            </tbody>
+          </table>
+        </ng-container>
+        <button (click)="exportCSVFile()" mat-raised-button
+                style="float: right; color: white; background-color: black;">
+          <mat-icon [ngStyle]="{'color':'white'}">get_app_icon</mat-icon>
+          {{'button.sensor.Download' | translate}}
+        </button>
+        <br>
+        <div [hidden]="!loading" class="loadSpinner">
+          <br><br>
+          <p class="loadSpinner" style="text-align: center">Daten werden geladen...</p><br>
+          <div class="spinner-border loadSpinner" role="status"
+               style="display: block; margin-left: auto; margin-right: auto;">
+            <span class="sr-only"></span>
+          </div>
+        </div>
+        <div [hidden]="loading" style="height: 30%; display: flex">
+          <canvas id="myChart" style="height: 50%; display: flex"></canvas>
+        </div>
+        <br>
+      </div>
+      <div id="control">
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,72 @@
+<div class="text">
+  <form [formGroup]="form">
+    <div class="form-group">
+      <br><br>
+      <h4>{{'button.building.building' | translate }}</h4>
+      <input
+        class="form-control"
+        formControlName="buildingName"
+        id="buildingName"
+        placeholder="{{ 'button.building.entity.buildingName' | translate }}"
+        type="text">
+      <div *ngIf="form.get('buildingName').touched && form.get('buildingName').invalid" class="alert alert-danger">
+        <div
+          *ngIf="form.get('buildingName').errors.required">{{ 'button.building.entity.buildingNameRequired' | translate }}</div>
+        <div
+          *ngIf="form.get('buildingName').errors.minlength">{{ 'button.building.entity.buildingNameMinLen' | translate }}</div>
+      </div>
+      <h4>{{ 'button.building.influxAccess' | translate }}</h4>
+      <input
+        class="form-control"
+        formControlName="databaseUrl"
+        id="databaseUrl"
+        placeholder="{{ 'button.building.entity.url' | translate }}"
+        type="text">
+      <div *ngIf="form.get('databaseUrl').touched && form.get('databaseUrl').invalid" class="alert alert-danger">
+        <div
+          *ngIf="form.get('databaseUrl').errors.required">{{ 'button.building.entity.urlRequired' | translate }}</div>
+      </div>
+      <input
+        class="form-control"
+        formControlName="organizationName"
+        id="organizationName"
+        placeholder="{{ 'button.building.entity.organizationName' | translate }}"
+        type="text">
+      <div *ngIf="form.get('organizationName').touched && form.get('organizationName').invalid"
+           class="alert alert-danger">
+        <div
+          *ngIf="form.get('organizationName').errors.required">{{ 'button.building.entity.organizationNameRequired' | translate }}</div>
+      </div>
+      <div class="form-group">
+        <input
+          class="form-control"
+          formControlName="token"
+          id="token"
+          placeholder="{{ 'button.building.entity.token' | translate }}"
+          type="text">
+        <div *ngIf="form.get('token').touched && form.get('token').invalid" class="alert alert-danger">
+          <div *ngIf="form.get('token').errors.required">{{ 'button.building.entity.tokenRequired' | translate }}</div>
+        </div>
+      </div>
+    </div>
+    <p><b>{{ 'button.common.important' | translate }}</b></p>
+    <p>{{'button.building.create.attentionIfc' | translate}}</p>
+    <br>{{'button.building.create.uploadHere' | translate }}<br> {{'button.building.create.attentionIfc' | translate }}
+    <br>
+    <input (change)='openFile($event)' accept='.ifc' hidden id="actual-btn" type='file'>
+    <label for="actual-btn" onPress={}>{{'button.building.uploadIfc' | translate}}</label><br>
+    <p [hidden]="!uploaded">{{'button.building.create.fileUploaded' | translate}}</p>
+    <p [hidden]="!getUploading()">{{'button.building.create.uploading' | translate}}</p><br>
+    <div [hidden]="!getUploading()" class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+    <br><br>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-dismiss="modal" routerLink="/myBuildings"
+              type="button">{{'button.common.back' | translate}}</button>
+      <button (click)="saveAndConvert()" [disabled]="form.invalid" class="btn btn-primary"
+              type="submit">{{'button.common.save' | translate}}
+      </button>
+    </div>
+  </form>
+</div>

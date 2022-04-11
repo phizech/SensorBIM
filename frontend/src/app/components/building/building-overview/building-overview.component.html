@@ -1,0 +1,143 @@
+<!-- *********************************** BUILDINGS FOR USER ****************************************-->
+
+<div *ngIf="buildingPath=='myBuildings'" class="container" id="allBuildings-container">
+  <div class="table-responsive">
+    <div class="table-wrapper">
+      <div class="table-title">
+        <div class="navbar navbar-expand-lg">
+          <div class="container-fluid">
+            <a class="navbar-brand custom-nav-header">{{ 'button.building.overview' | translate }}</a>
+            <button class="whiteButton" mat-raised-button routerLink="/addBuilding">
+              <mat-icon>add</mat-icon>
+              {{ 'button.building.createBuilding' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <table [dataSource]="dataSource" class="table table-striped table-hover" mat-table matSort>
+        <ng-container matColumnDef="name">
+          <th *matHeaderCellDef class="w-25" mat-header-cell
+              mat-sort-header="">  {{ 'button.building.name' | translate }} </th>
+          <td *matCellDef="let element" mat-cell> {{element.name}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="id">
+          <th *matHeaderCellDef class="w-25" mat-header-cell
+              mat-sort-header>  {{ 'button.building.id' | translate }} </th>
+          <td *matCellDef="let element" mat-cell> {{element.id}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Stockwerke">
+          <th *matHeaderCellDef class="w-25" mat-header-cell
+              mat-sort-header> {{ 'button.building.levels' | translate }} </th>
+          <td *matCellDef="let element" mat-cell> {{element.levels.length}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="icons">
+          <th *matHeaderCellDef class="w-25" mat-header-cell></th>
+          <td *matCellDef="let building" mat-cell>
+            <a [routerLink]="['/view/', building.id]" class="settings clickabel-a" data-toggle="tooltip"
+               title="{{ 'button.building.view' | translate }}"><i
+              class="material-icons">&#xe417;</i></a>
+            <a [routerLink]="['/editBuilding/', building.id]" class="edit"
+               data-toggle="tooltip" title="{{ 'button.building.edit' | translate }}"><i
+              class="material-icons">edit</i></a>
+            <a (click)="setSelectedBuilding(building)" class="delete clickabel-a" data-target="#exampleModalCenter"
+               data-toggle="modal" title="{{ 'button.building.delete' | translate }}"><i
+              class="material-icons">&#xE5C9;</i></a>
+            <a [routerLink]="['/switchingDevices/', building.id]" class="control settings clickabel-a"
+               data-toggle="tooltip"
+               title="{{ 'button.building.devices' | translate }}"><i
+              class="material-icons">device_hub</i></a>
+          </td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+
+      </table>
+      <mat-paginator
+        [pageSize]="5" hidePageSize="true">
+      </mat-paginator>
+    </div>
+  </div>
+</div>
+
+<!-- *********************************** ALL BUILDINGS ****************************************-->
+
+<div *ngIf="buildingPath=='allBuildings'" class="container" id="allBuildings-container">
+  <div class="table-responsive">
+    <div class="table-wrapper">
+      <div class="table-title">
+        <div class="navbar navbar-expand-lg">
+          <div class="container-fluid">
+            <a class="navbar-brand custom-nav-header">{{ 'button.building.overview' | translate }}</a>
+            <button class="whiteButton" mat-raised-button routerLink="/addBuilding">
+              <mat-icon>add</mat-icon>
+              {{ 'button.building.createBuilding' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <table [dataSource]="dataSource" class="table table-striped table-hover" mat-table matSort>
+        <ng-container matColumnDef="id">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header="">{{ 'button.building.id' | translate }}</th>
+          <td *matCellDef="let building" mat-cell>{{building.id}}</td>
+        </ng-container>
+        <ng-container matColumnDef="name">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'button.building.name' | translate }}</th>
+          <td *matCellDef="let building" mat-cell>{{building.name}}</td>
+        </ng-container>
+        <ng-container matColumnDef="Stockwerke">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'button.building.levels' | translate }}</th>
+          <td *matCellDef="let building" mat-cell>{{building.levels.length}}</td>
+        </ng-container>
+        <ng-container matColumnDef="Benutzer">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'button.common.user' | translate }}</th>
+          <td *matCellDef="let building" mat-cell>{{building.user.username}}</td>
+        </ng-container>
+        <ng-container matColumnDef="icons">
+          <th *matHeaderCellDef mat-header-cell></th>
+          <td *matCellDef="let building" mat-cell>
+            <a [routerLink]="['/view/', building.id]" class="settings clickabel-a" data-toggle="tooltip"
+               title="{{ 'button.building.view' | translate }}"><i
+              class="material-icons">&#xe417;</i></a>
+            <a (click)="setSelectedBuilding(building)" class="delete clickabel-a" data-target="#exampleModalCenter"
+               data-toggle="modal" title="{{ 'button.building.delete' | translate }}"><i
+              class="material-icons">&#xE5C9;</i></a>
+          </td>
+        </ng-container>
+        <tr *matHeaderRowDef="displayedColumnsAll" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumnsAll;" mat-row></tr>
+      </table>
+      <mat-paginator
+        [pageSize]="5" hidePageSize="true">
+      </mat-paginator>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="exampleModalCenter"
+     role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">{{ 'button.common.confirmation' | translate }}</h5>
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ 'button.building.deleteBuildingMessage' | translate }}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal"
+                type="button">{{ 'button.common.closeWindow' | translate }}</button>
+        <button (click)="clickMethod()" class="delete btn btn-primary" data-dismiss="modal"
+                type="button">{{ 'button.common.delete' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

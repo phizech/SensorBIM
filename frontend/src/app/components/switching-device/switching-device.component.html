@@ -1,0 +1,139 @@
+<div class="container" id="main-container">
+  <div class="table-responsive">
+    <div class="table-wrapper">
+
+      <div class="table-title">
+        <div class="navbar navbar-expand-lg">
+          <div class="container-fluid">
+            <a class="navbar-brand custom-nav-header">{{'button.building.devices' | translate}}</a>
+          </div>
+        </div>
+      </div>
+
+      <table [dataSource]="dataSource" class="table table-striped table-hover" mat-table>
+        <ng-container matColumnDef="device">
+          <th *matHeaderCellDef class="w-25" mat-header-cell
+              style="text-align: center">{{ 'button.device.name' | translate }}
+          </th>
+          <td *matCellDef="let device" mat-cell style="text-align: center">
+            {{device.device.name}}
+            <a (click)="setSelectedDevice(device)" class="edit"
+               data-target="#infoModal" data-toggle="modal" style="cursor:pointer;" title="Info"><i
+              class="material-icons">info</i></a>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="lastChanged">
+          <th *matHeaderCellDef class="w-25" mat-header-cell
+              style="text-align: center">{{ 'switchingDevice.LastChanged' | translate }}</th>
+          <td *matCellDef="let device" mat-cell style="text-align: center">
+            {{device.lastChanged}}</td>
+        </ng-container>
+        <ng-container matColumnDef="switch">
+          <th *matHeaderCellDef class="w-25" mat-header-cell
+              style="text-align: center">{{ 'switchingDevice.OnOff' | translate }}</th>
+          <td *matCellDef="let device" style="text-align: center">
+            <button (click)="setSelectedDevice(device)" [ngClass]="getButtonClass(device)"
+                    data-target="#confirmSwitch" data-toggle="modal">{{device.device.status}}</button>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th *matHeaderCellDef class="w-25" mat-header-cell
+              style="text-align: center">
+          </th>
+          <td *matCellDef="let device" mat-cell style="text-align: center">
+            <button (click)="setSelectedDevice(device)" [ngClass]="getButtonClassAutomatic(device)"
+                    data-target="#switchMode"
+                    data-toggle="modal">{{device.automatic ? ('switchingDevice.Automatic' | translate) : ('switchingDevice.Manual' | translate)}}</button>
+          </td>
+        </ng-container>
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+      </table>
+      <div [hidden]="!loading" class="loadSpinner">
+        <p class="loadSpinner" style="text-align: center">{{ 'switchingDevice.GettingStatus' | translate }}</p><br>
+        <div class="spinner-border loadSpinner" role="status"
+             style="display: block; margin-left: auto; margin-right: auto;">
+          <span class="sr-only"></span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-dismiss="modal" routerLink="/myBuildings" style="background-color: black"
+              type="button">{{'button.common.back' | translate}}</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for switch device -->
+<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="confirmSwitch"
+     role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">{{ 'button.common.confirmation' | translate }}</h5>
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ 'switchingDevice.confirmChangeStatus' | translate }}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal"
+                type="button">{{ 'button.common.closeWindow' | translate }}</button>
+        <button (click)="switchDevice()" class="delete btn btn-primary" data-dismiss="modal"
+                type="button">{{ 'button.common.yes' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for setting device to manual -->
+<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="switchMode"
+     role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">{{ 'button.common.confirmation' | translate }}</h5>
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ 'switchingDevice.confirmAutomatic' | translate }}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal"
+                type="button">{{ 'button.common.closeWindow' | translate }}</button>
+        <button (click)="switchMode()" class="delete btn btn-primary" data-dismiss="modal"
+                type="button">{{ 'button.common.yes' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal for setting device to manual -->
+<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="infoModal"
+     role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">{{ 'switchingDevice.GetInformation' | translate }}</h5>
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ getComment() }}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal"
+                type="button">{{ 'button.common.closeWindow' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,254 @@
+<!--*********************************************** ENGLISH ******************************************************-->
+
+<div *ngIf="appComponent.selectedLang==='gb'" class="container">
+  <div class="row">
+    <div class="col-sm-3">
+      <nav class="sticky-top-custom navbar-brand" id="toc" style="z-index: 1">
+        <br>
+        <a fragment="overview" routerLink="" style="color: black;">Overview</a> <br>
+
+      </nav>
+    </div>
+    <div class="col-sm-9">
+      <br>
+      <h2 id="overview">Overview</h2>
+      <p>
+        This application allows to display building models in 2D and the measured sensor values in real time. An IFC
+        file can be uploaded, from which information such as floor names, associated rooms, their sensors, etc. are
+        extracted.
+        Each sensor must have certain parameters, which are explained in more detail in the chapter Sensors. At the end
+        of the chapter, the sensor family for Revit is available for download. <br>
+        A 2D view of the building can be viewed under "Building". Those rooms that contain a sensor are colored
+        depending on the measured value. Which unit should be displayed can be selected in a dropdown menu. If there are
+        sensors in the room but not for the selected unit, the room will be colored black.
+        If you click on the rooms with sensors, you will be redirected to a sensor overview. In this one can see the
+        minimum, maximum and average value in a selected time window. At the beginning the time window is the current
+        day. Furthermore, a line chart is displayed, which graphically shows the time series data of each sensor of the
+        selected unit.
+        The measured values can be exported as a csv file. This file then contains all measured values in the selected
+        time window. In addition, information about the sensor and the time of the measurement is stored.
+        <br><br>
+        More detailed instructions can be found <a download
+                                                   href="https://git.uibk.ac.at/informatik/qe/bim-team/SensorBIM/-/raw/dev/Documentation/Instructions/Instructions.pdf?inline=false">here</a>.
+      </p>
+      <div class="card card-body">
+        <b>Important:</b> The export of a file to Revit must be in IFC format 2.3. Furthermore, the property sets must
+        be exported as well.
+      </div>
+      <br>
+      <p align="center">
+        <img
+          src="https://git.uibk.ac.at/informatik/qe/bim-team/SensorBIM/-/raw/dev/Documentation/Images/view.png?inline=false"
+          width="600">
+        <br> <br>
+        2D plan of the first floor in the application. The floor and the measurements can be selected in the top left.
+      </p>
+
+      <p align="center">
+        <img
+          src="https://git.uibk.ac.at/informatik/qe/bim-team/SensorBIM/-/raw/dev/Documentation/Images/sensor-overview.png?inline=false"
+          width="600">
+        <br> <br>
+        A visualization of the measurements in the selected room. The date range can be selected in the top right.
+        The default value of the date is the current date.
+        The measurements can be downloaded.
+      </p>
+      <br>
+    </div>
+  </div>
+</div>
+
+
+<!--*********************************************** DEUTSCH ******************************************************-->
+
+<div *ngIf="appComponent.selectedLang==='at'" class="container">
+  <div class="row">
+    <div class="col-sm-3">
+      <nav class="sticky-top-custom navbar-brand" id="toc" style="z-index: 1">
+        <br>
+        <a fragment="overview" routerLink="" style="color: black;">Überblick</a> <br>
+      </nav>
+    </div>
+    <div class="col-sm-9">
+      <br>
+      <h2 id="overview">Überblick</h2>
+      <p>
+        Diese Applikation erlaubt es, Gebäudemodelle in 2D und die gemessenen Sensorwerte in Echtzeit darzustellen.
+        Dabei kann eine IFC-Datei hochgeladen werden, von welchen Informationen, wie etwa Name von Stockwerken,
+        dazugehörende Räume, deren Sensoren etc., extrahiert werden. <br>
+        Jeder Sensor muss über bestimmte Parameter verfügen, welche im Kapitel <a href="#sensoren">Sensoren</a> genauer
+        erläutert werden. Am Ende des Kapitels
+        steht die Sensorfamilie für Revit zum Downloaden bereit. <br>
+        Eine 2D-Ansicht des Gebäudes kann unter "Gebäude" eingesehen werden. Jene Räume, welche einen Sensor beinhalten,
+        werden,
+        je nach Messwert, eingefärbt. Welche Einheit angezeigt werden soll, kann in einem Dropdown Menü ausgewählt
+        werden.
+        Sind Sensoren im Raum, aber nicht für die ausgewählte Einheit, so wird der Raum schwarz gefärbt. <br>
+        Wenn auf die Räume mit Sensoren geklickt wird, wird man zu einer Sensorübersicht weitergeleitet. In dieser kann
+        man
+        der Minimal-, Maximal- und Durchschnittswert in einem ausgewählten Zeitfenster einsehen. Zu Beginn ist das
+        Zeitfensteer der
+        aktuelle Tag. Des Weiteren wird eine Linechart angezeigt, die die Zeitreihendaten jeder Sensoren der
+        ausgewählten Einheit grafisch darstellt. <br>
+        Die Messwerte können als csv Datei exportiert werden. Diese Datei enthält dann alle Messwerte in dem
+        ausgewählten
+        Zeitfenster. Dazu werden Informationen zum Sensor und der Zeitpunkt der Messung gespeichert. <br>
+        <br>
+        Eine ausführlichere Anleitung kann <a download
+                                              href="https://git.uibk.ac.at/informatik/qe/bim-team/SensorBIM/-/raw/dev/Documentation/Instructions/Anleitung_SensorBIM.pdf?inline=false">hier</a>
+        gefunden werden.
+      </p>
+      <div class="card card-body">
+        <b>Wichtig:</b> Der Export einer Datei in Revit muss im IFC Format 2.3 sein. Des Weiteren müssen die Property
+        Sets
+        mitexportiert werden.
+      </div>
+      <br>
+      <p align="center">
+        <img
+          src="https://git.uibk.ac.at/informatik/qe/bim-team/SensorBIM/-/raw/dev/Documentation/Images/view.png?inline=false"
+          width="600">
+        <br> <br>
+        2D-Plan der ersten Etage in der Anwendung. Das Stockwerk und die Messeinheit können oben links ausgewählt
+        werden.
+      </p>
+
+      <p align="center">
+        <img
+          src="https://git.uibk.ac.at/informatik/qe/bim-team/SensorBIM/-/raw/dev/Documentation/Images/sensor-overview.png?inline=false"
+          width="600">
+        <br> <br>
+        Eine Visualisierung der Messungen im ausgewählten Raum. Der Datumsbereich kann oben rechts ausgewählt werden.
+        Der Standardwert des Datums ist das aktuelle Datum.
+        Die Messungen können heruntergeladen werden.
+      </p>
+      <br>
+    </div>
+  </div>
+</div>
+
+
+<!--*********************************************** FRENCH ******************************************************-->
+
+<div *ngIf="appComponent.selectedLang==='fr'" class="container">
+  <div class="row">
+    <div class="col-sm-3">
+      <nav class="sticky-top-custom navbar-brand" id="toc" style="z-index: 1">
+        <br>
+        <a fragment="overview" routerLink="" style="color: black;">Aperçu</a> <br>
+      </nav>
+    </div>
+    <div class="col-sm-9">
+      <h2 id="overview">Aperçu</h2>
+      <p>
+        Cette application permet d'afficher les modèles de bâtiments en 2D et les valeurs des capteurs mesurés en temps
+        réel. Un fichier IFC peut être téléchargé, à partir duquel des informations telles que les noms des étages, les
+        pièces associées, leurs capteurs, etc. sont extraites.
+        Chaque capteur doit avoir certains paramètres, qui sont expliqués plus en détail dans le chapitre Capteurs. À la
+        fin de ce chapitre, la famille de capteurs pour Revit est disponible au téléchargement. <br>
+        Une vue 2D du bâtiment peut être visualisée sous "Bâtiment". Les pièces qui contiennent un capteur sont colorées
+        en fonction de la valeur mesurée. L'unité qui doit être affichée peut être sélectionnée dans un menu déroulant.
+        S'il y a des capteurs dans la pièce mais pas pour l'unité sélectionnée, la pièce sera colorée en noir.
+        Si vous cliquez sur les pièces avec des capteurs, vous serez redirigé vers un aperçu des capteurs. On peut y
+        voir la valeur minimale, maximale et moyenne dans une fenêtre de temps sélectionnée. Au début, la fenêtre de
+        temps est le jour actuel. En outre, un graphique linéaire est affiché, qui montre graphiquement les données de
+        la série chronologique de chaque capteur de l'unité sélectionnée.
+        Les valeurs mesurées peuvent être exportées dans un fichier csv. Ce fichier contient alors toutes les valeurs
+        mesurées dans la fenêtre temporelle sélectionnée. En outre, des informations sur le capteur et l'heure de la
+        mesure sont enregistrées.
+        <br><br>
+        Vous trouverez des instructions plus détaillées <a download
+                                                           href="https://git.uibk.ac.at/informatik/qe/bim-team/SensorBIM/-/raw/dev/Documentation/Instructions/Instructions.pdf?inline=false">ici</a>.
+      </p>
+      <div class="card card-body">
+        <b>Important:</b> L'exportation d'un fichier vers Revit doit être au format IFC 2.3. De plus, les Property Sets
+        doivent également être exportés.
+      </div>
+      <br>
+      <p align="center">
+        <img
+          src="https://git.uibk.ac.at/informatik/qe/bim-team/SensorBIM/-/raw/dev/Documentation/Images/view.png?inline=false"
+          width="600">
+        <br> <br>
+        Plan 2D du premier étage dans l’application. Le plancher et les dimensions peuvent être sélectionnés en haut à
+        gauche.
+      </p>
+
+      <p align="center">
+        <img
+          src="https://git.uibk.ac.at/informatik/qe/bim-team/SensorBIM/-/raw/dev/Documentation/Images/sensor-overview.png?inline=false"
+          width="600">
+        <br> <br>
+        Une visualisation des mesures dans la pièce sélectionnée. La plage de dates peut être sélectionnée en haut à
+        droite.
+        La valeur par défaut de la date est la date courante.
+        Les mesures peuvent être téléchargées.
+      </p>
+      <br>
+
+    </div>
+  </div>
+</div>
+
+
+<!--*********************************************** ITALIANO ******************************************************-->
+
+<div *ngIf="appComponent.selectedLang==='it'" class="container">
+  <div class="row">
+    <div class="col-sm-3">
+      <nav class="sticky-top-custom navbar-brand" id="toc" style="z-index: 1">
+        <br>
+        <a fragment="overview" routerLink="" style="color: black;">Panoramica</a> <br>
+      </nav>
+    </div>
+    <div class="col-sm-9">
+      <br>
+      <h2 id="overview">Panoramica</h2>
+      <p>
+        Questa applicazione permette di visualizzare i modelli di edifici in 2D e i valori dei sensori misurati in tempo
+        reale. Si può caricare un file IFC, dal quale vengono estratte informazioni come i nomi dei piani, le stanze
+        associate, i loro sensori, ecc.
+        Ogni sensore deve avere certi parametri, che sono spiegati più in dettaglio nel capitolo Sensori. Alla fine del
+        capitolo, la famiglia di sensori per Revit è disponibile per il download. <br>
+        Una vista 2D dell'edificio può essere visualizzata sotto "Edificio". Le stanze che contengono un sensore sono
+        colorate a seconda del valore misurato. Quale unità deve essere visualizzata può essere selezionata in un menu a
+        tendina. Se ci sono sensori nella stanza ma non per l'unità selezionata, la stanza sarà colorata di nero.
+        Se si clicca sulle stanze con sensori, si viene reindirizzati a una panoramica dei sensori. In questa si può
+        vedere il valore minimo, massimo e medio in una finestra temporale selezionata. All'inizio la finestra temporale
+        è il giorno corrente. Inoltre, viene visualizzato un grafico a linee, che mostra graficamente i dati della serie
+        temporale di ogni sensore dell'unità selezionata.
+        I valori misurati possono essere esportati come file csv. Questo file contiene quindi tutti i valori misurati
+        nella finestra temporale selezionata. Inoltre, vengono memorizzate le informazioni sul sensore e l'ora della
+        misurazione.
+        <br><br>
+        Istruzioni più dettagliate possono essere trovate <a download
+                                                             href="https://git.uibk.ac.at/informatik/qe/bim-team/SensorBIM/-/raw/dev/Documentation/Instructions/Instructions.pdf?inline=false">qui</a>.
+      </p>
+      <div class="card card-body">
+        <b>Importante:</b> L'esportazione di un file in Revit deve essere in formato IFC 2.3. Inoltre, devono essere
+        esportati anche i set di proprietà.
+      </div>
+      <br>
+      <p align="center">
+        <img
+          src="https://git.uibk.ac.at/informatik/qe/bim-team/SensorBIM/-/raw/dev/Documentation/Images/view.png?inline=false"
+          width="600">
+        <br> <br>
+        Piano 2D del primo piano nell’applicazione. Il pavimento e le misure possono essere selezionati in alto a
+        sinistra.
+      </p>
+      <br>
+      <p align="center">
+        <img
+          src="https://git.uibk.ac.at/informatik/qe/bim-team/SensorBIM/-/raw/dev/Documentation/Images/sensor-overview.png?inline=false"
+          width="600">
+        <br> <br>
+        Visualizzazione delle misure nella stanza selezionata. L’intervallo di date può essere selezionato in alto a
+        destra.
+        Il valore predefinito della data è la data corrente.
+        Le misure possono essere scaricate.
+      </p>
+      <br>
+    </div>
+  </div>
+</div>

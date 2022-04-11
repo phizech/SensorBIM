@@ -1,0 +1,23 @@
+# Editors
+.vscode/
+.idea/
+.project
+.metadata/
+
+# Unit test / coverage reports
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+.mypy_cache/
+.scannerwork/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+/.pydevproject

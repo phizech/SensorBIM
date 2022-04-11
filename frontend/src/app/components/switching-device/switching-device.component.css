@@ -1,0 +1,23 @@
+.mat-column-device {
+  flex: 0 0 3%;
+}
+
+.mat-column-status {
+  flex: 0 0 3%;
+}
+
+.mat-column-switch {
+  flex: 0 0 33.33%;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+th, td {
+  overflow: hidden;
+  width: 50%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

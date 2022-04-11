@@ -1,0 +1,198 @@
+{
+  "Admin": "Admin",
+  "Benutzer": "Utilisateur",
+  "basicErrorMessage": "Une erreur est survenue!",
+  "building": {
+    "deleting": {
+      "failure": "Le bâtiment n'a pas pu être supprimé !",
+      "success": "Bâtiment supprimé avec succès !"
+    },
+    "saving": {
+      "failure": "Échec de la sauvegarde du bâtiment !",
+      "nameTaken": "Le nom du bâtiment est déjà pris !",
+      "success": "L'enregistrement du bâtiment a réussi !",
+      "wrongURL": "L'URL est invalide, elle n'a pas pu être atteinte !"
+    },
+    "update": {
+      "failure": "Le bâtiment n'a pas pu être mis à jour !",
+      "success": "Le bâtiment a été mis à jour avec succès !"
+    }
+  },
+  "switchingDevice": {
+    "confirmChangeStatus": "Êtes-vous sûr de vouloir changer le statut de cet appareil?",
+    "confirmAutomatic": "Êtes-vous sûr de vouloir contrôler l’appareil manuellement à l’avenir?",
+    "GettingStatus": "Chargement des périphériques et vérification de l’état. . .",
+    "Manual": "Manuel",
+    "Automatic": "Automatique",
+    "LastChanged": "Dernière modification",
+    "OnOff": "ON/OFF",
+    "GetInformation": "L’information"
+  },
+  "button": {
+    "auth": {
+      "forgotPW?": "Mot de passe oublié?",
+      "login": "S'identifier",
+      "registerMsg": "Nouveau ici? Créer un compte!"
+    },
+    "building": {
+      "building": "bâtiment",
+      "create": {
+        "attentionIfc": "Veuillez considérer que seuls les fichiers IFC peuvent être téléchargés",
+        "bucketMsg": "Le jeton doit disposer d'autorisations de lecture sur les buckets,\ndans lequel les valeurs mesurées sont stockées",
+        "fileUploaded": "Fichier téléchargé",
+        "importantMsg": "Le jeton doit avoir des droits de lecture sur les buckets,<br>dans lequel les valeurs mesurées sont stockées",
+        "uploadHere": "Téléchargez le fichier IFC ici",
+        "uploading": "Vérification et téléchargement..."
+      },
+      "createBuilding": "Créer un nouveau bâtiment",
+      "delete": "Supprimer le bâtiment",
+      "deleteBuildingMessage": "Voulez-vous vraiment supprimer le bâtiment ? Ce processus ne peut pas être annulé.",
+      "edit": "Modifier le bâtiment",
+      "entity": {
+        "buildingName": "Nom du bâtiment",
+        "buildingNameMinLen": "La longueur minimale du nom du bâtiment est de 5 caractères",
+        "buildingNameRequired": "Le nom du bâtiment est requis",
+        "organizationName": "Nom de l'organisation",
+        "organizationNameRequired": "Le nom de l'organisation est requis",
+        "token": "Jeton InfluxDB",
+        "tokenRequired": "Le jeton influxDB est requis",
+        "url": "URL",
+        "urlRequired": "L'URL est obligatoire"
+      },
+      "id": "Id",
+      "influxAccess": "Accès InfluxDB",
+      "levels": "Niveaux",
+      "name": "Prénom",
+      "overview": "Vue d'ensemble",
+      "uploadIfc": "Télécharger le fichier IFC",
+      "view": "Vue 2D",
+      "devices": "Appareil de commande"
+    },
+    "common": {
+      "No": "Non",
+      "back": "Retour",
+      "closeWindow": "Fermer",
+      "confirmation": "Confirmation",
+      "delete": "Effacer",
+      "important": "Important!",
+      "save": "sauvegarder",
+      "user": "Utilisateur",
+      "yes": "Oui"
+    },
+    "navbar": {
+      "adminManagement": "Gestion administrative",
+      "allBuildings": "Tous les bâtiments",
+      "buildingOverview": "Aperçu du bâtiment",
+      "logout": "Connectez - Out",
+      "myBuildings": "Mes bâtiments",
+      "ownProfile": "Profil personnel",
+      "user": "Utilisateur",
+      "userOverview": "Présentation de l'utilisateur"
+    },
+    "sensor": {
+      "Download": "Télécharger",
+      "analysis": "Une analyse",
+      "average": "Moyenne",
+      "control": "Contrôlé",
+      "max": "Valeur max",
+      "min": "Valeur min",
+      "overview": "Vue d'ensemble",
+      "time": "Temps",
+      "value": "Valeur"
+    },
+    "device": {
+      "name": "",
+      "onoff": "",
+      "status": ""
+    },
+    "user": {
+      "create": {
+        "emailRequired": "L'adresse email est obligatoire !",
+        "firstNameRequired": "Le prénom est obligatoire !",
+        "invalidEmail": "Adresse e-mail invalide",
+        "lastNameRequired": "Le nom de famille est obligatoire !",
+        "minLenUsername": "La longueur minimale du nom d'utilisateur est de 5 caractères",
+        "password": "Mot de passe",
+        "passwordRequired": "Le mot de passe est obligatoire !",
+        "register": "registre",
+        "repeatedPassword": "Répéter le mot de passe",
+        "usernameRequired": "Un nom d'utilisateur est requis!"
+      },
+      "createNewUser": "Créer un nouvel utilisateur",
+      "deleteUserMsg": "Voulez-vous vraiment supprimer l'utilisateur ? Ce processus ne peut pas être annulé.",
+      "edit": {
+        "changePassword": "Changer le mot de passe",
+        "changePasswordConfirmation": "Voulez-vous vraiment réinitialiser le mot de passe de cet utilisateur ? Un e-mail avec un nouveau mot de passe sera envoyé à son adresse e-mail.",
+        "editUser": "Modifier l'utilisateur",
+        "newPassword": "Nouveau mot de passe",
+        "oldPassword": "Ancien mot de passe",
+        "repeatedPassword": "Mot de passe répété"
+      },
+      "email": "Adresse électronique",
+      "firstName": "Prénom",
+      "id": "Id",
+      "lastName": "Nom de famille",
+      "overview": "Vue d'ensemble",
+      "resetPassword": "Réinitialiser le mot de passe",
+      "role": "Rôle",
+      "username": "Nom d'utilisateur"
+    }
+  },
+  "influx": {
+    "connection": {
+      "failed": "Échec de la connexion à influxDB !"
+    }
+  },
+  "login": {
+    "serverConFailed": "Impossible d'accéder au serveur !",
+    "success": "Connexion réussie!",
+    "wrongPW": "Mot de passe/nom d'utilisateur erroné !"
+  },
+  "upload": {
+    "building": {
+      "noRooms": "Le fichier téléchargé ne contient aucune pièce. Veuillez vérifier si tous les paramètres ont été exportés depuis Revit !",
+      "noSensors": "Le bâtiment ne contient aucun capteur (dans InflxuDB disponible) !",
+      "noStoreys": "Le bâtiment ne contient aucun niveau !"
+    },
+    "failed": "La conversion du fichier a échoué.",
+    "file": {
+      "convertingFailed": "Le fichier n'a pas pu être converti !",
+      "invalidTurtle": "Le fichier n'est pas un fichier tortue valide !",
+      "noIFC": "Le fichier sélectionné n'est pas un fichier IFC !",
+      "successful": "Le fichier a été téléchargé avec succès !"
+    },
+    "success": "Le fichier a été converti avec succès !"
+  },
+  "user": {
+    "delete": {
+      "failed": "L'utilisateur n'a pas pu être supprimé !",
+      "success": "l'utilisateur a été supprimé avec succès !"
+    },
+    "email": {
+      "alreadyExists": "Un utilisateur avec cette adresse e-mail existe déjà !",
+      "invalid": "L'e-mail est invalide !",
+      "sendEmail": {
+        "Failure": "L'e-mail n'a pas pu être envoyé !",
+        "Success": "E-mail envoyé avec succès !"
+      }
+    },
+    "loadUserFailed": "Le chargement de l'utilisateur a échoué !",
+    "password": {
+      "NewRepeatedNotMatching": "Les nouveaux mots de passe et les mots de passe répétés ne correspondent pas !",
+      "OldInvalid": "L'ancien mot de passe est invalide !",
+      "OldNewMatch": "L'ancien et le nouveau mots de passe correspondent !",
+      "createRepeatedWrong": "le mot de passe ne correspond pas! ",
+      "invalid": "Le mot de passe est incorrect!",
+      "savingError": "Impossible de réinitialiser le mot de passe !",
+      "savingFailed": "L'enregistrement du mot de passe a échoué !",
+      "savingSuccess": "La réinitialisation du mot de passe a réussi !"
+    },
+    "savingFailed": "L'utilisateur n'a pas pu être enregistré !",
+    "savingSuccess": "L'utilisateur a été enregistré avec succès !",
+    "updateFailed": "L'utilisateur n'a pas pu être mis à jour !",
+    "updateSuccess": "L'utilisateur a été mis à jour avec succès!",
+    "username": {
+      "taken": "Le nom d'utilisateur est déjà pris !"
+    }
+  }
+}

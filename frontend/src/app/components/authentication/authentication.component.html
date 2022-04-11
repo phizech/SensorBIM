@@ -1,0 +1,45 @@
+<div class="justify-content-md-center align-items-center vh-100">
+  <div class="text">
+    <form [formGroup]="form">
+      <div class="form-group">
+        <br><br>
+        <h4>{{ 'button.auth.login' | translate }}</h4>
+        <input
+          class="form-control"
+          formControlName="username"
+          id="username"
+          placeholder="{{ 'button.user.create.username' | translate }}"
+          type="text">
+        <div *ngIf="username.touched && username.invalid" class="alert alert-danger">
+          <div *ngIf="username.errors.required">{{ 'button.user.create.usernameRequired' | translate }}</div>
+        </div>
+        <input
+          class="form-control"
+          formControlName="password"
+          id="password"
+          placeholder="{{ 'button.user.create.password' | translate }}"
+          type="password">
+        <div *ngIf="password.touched && password.invalid" class="alert alert-danger">
+          <div *ngIf="password.errors.required">{{ 'button.user.create.passwordRequired' | translate }}</div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-dismiss="modal" id="backFromLogin" routerLink="/home"
+                  type="button">{{ 'button.common.back' | translate }}
+          </button>
+          <button (click)="login(username, password)" class="btn btn-primary" id="Login"
+                  type="submit">{{ 'button.auth.login' | translate }}
+          </button>
+        </div>
+        <!-- Remind Passowrd -->
+        <div id="formFooter">
+          <a class="underlineHover" href="/resetPassword"
+             id="forgotPassword">{{ 'button.auth.forgotPW?' | translate }}</a>
+        </div>
+        <div id="formFooter">
+          <a class="underlineHover" href="/createAccount"
+             id="createAccount">{{ 'button.auth.registerMsg' | translate }}</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

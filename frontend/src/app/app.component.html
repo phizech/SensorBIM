@@ -1,0 +1,84 @@
+<div class="m-4">
+  <nav class="navbar navbar-expand-lg" style="background-color: black;">
+    <div class="container-fluid">
+
+      <div class="btn-group">
+        <a class="whiteButton dropdown-flag flag-icon flag-icon-squared flag-icon-{{ selectedLang }}"
+           data-toggle="dropdown"
+           href="#"
+           style="right:10px;" type="button">
+        </a>
+        <div class="dropdown-menu whiteButton">
+          <a (click)="changeLang('at')" class="dropdown-item whiteButton"><span
+            class="flag-icon flag-icon-at flag-icon-squared"></span> Deutsch</a>
+          <a (click)="changeLang('gb')" class="dropdown-item whiteButton"><span
+            class="flag-icon flag-icon-gb flag-icon-squared"></span> English</a>
+          <a (click)="changeLang('fr')" class="dropdown-item whiteButton"><span
+            class="flag-icon flag-icon-fr flag-icon-squared"></span> Français</a>
+          <a (click)="changeLang('it')" class="dropdown-item whiteButton"><span
+            class="flag-icon flag-icon-it flag-icon-squared" style="z-index: 99999"></span> Italiano</a>
+        </div>
+      </div>
+      <div style="top:10px;">
+        <a class="sticky-top-custom navbar-brand whiteButton"
+           routerLink="/home" routerLinkActive="active current"
+           style="">SensorBIM</a>
+      </div>
+      <a class="navbar-toggler" data-bs-target="#navbarCollapse" data-bs-toggle="collapse"
+         style="justify-content: right; color:white" type="button">
+        <span class="navbar-toggler-icon"></span>
+        <mat-icon>menu</mat-icon>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav">
+
+          <a *ngIf="loginService.isLoggedIn()" aria-current="page" class="nav-item nav-link whiteButton"
+             routerLink="/myBuildings"
+             routerLinkActive="active current">{{'button.navbar.myBuildings' | translate}}</a>
+
+          <div class="nav-item dropdown">
+            <a *ngIf="loginService.isLoggedIn() && loginService.isAdmin()"
+               class="nav-link dropdown-toggle whiteButton"
+               data-bs-toggle="dropdown"
+               href="#">
+              {{'button.navbar.adminManagement' | translate}}
+            </a>
+            <div class="dropdown-menu whiteButton">
+              <a class="dropdown-item whiteButton" routerLink="/userManagement"
+                 routerLinkActive="active current">{{'button.navbar.userOverview' | translate}}</a>
+              <a class="dropdown-item whiteButton" routerLink="/allBuildings"
+                 routerLinkActive="active current">{{'button.navbar.buildingOverview' | translate}}</a>
+            </div>
+          </div>
+
+        </div>
+        <div class="navbar-nav ms-auto">
+
+          <a *ngIf="loginService.isLoggedIn()"
+             aria-current="page"
+             class="nav-link nav-item whiteButton" routerLink="/editUser/0"
+             routerLinkActive="active current"
+             title="{{'button.navbar.ownProfile' | translate}}">
+            <i class="material-icons">
+              <mat-icon>person</mat-icon>
+            </i></a>
+
+          <a
+            (click)="loginService.logout()"
+            *ngIf="loginService.isLoggedIn()" aria-current="page"
+            class="nav-link nav-item whiteButton" routerLink="/login"
+            routerLinkActive="active current" title="Logout">
+            <i class="material-icons">
+              <mat-icon>login</mat-icon>
+            </i></a>
+
+
+        </div>
+
+      </div>
+    </div>
+  </nav>
+</div>
+
+
+<router-outlet></router-outlet>
