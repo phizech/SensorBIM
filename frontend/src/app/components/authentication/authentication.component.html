@@ -8,7 +8,7 @@
           class="form-control"
           formControlName="username"
           id="username"
-          placeholder="{{ 'button.user.create.username' | translate }}"
+          placeholder="{{ 'button.user.username' | translate }}"
           type="text">
         <div *ngIf="username.touched && username.invalid" class="alert alert-danger">
           <div *ngIf="username.errors.required">{{ 'button.user.create.usernameRequired' | translate }}</div>

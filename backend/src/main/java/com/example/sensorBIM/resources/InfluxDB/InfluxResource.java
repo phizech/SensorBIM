@@ -84,7 +84,7 @@ public class InfluxResource {
         Sensor sensor = findSensorWithSelectedSensorType(room, selectedSensorType);
         Response<MeasurePoint> response;
         if (sensor == null) {
-            response = new Response<>(ResponseStatus.FAILURE, "In diesem Stockwerk gibt es keinen Sensor, welcher " + selectedSensorType + " misst.", null);
+            response = new Response<>(ResponseStatus.FAILURE, "Im " + room.getName() + " gibt es keinen Sensor, welcher " + selectedSensorType + " misst.", null);
         } else {
             MeasurePoint measurement = influxConnectionService.getLatestMeasurementPoint(room, selectedSensorType);
             if (measurement == null) {

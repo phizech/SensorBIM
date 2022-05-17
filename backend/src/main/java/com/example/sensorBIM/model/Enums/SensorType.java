@@ -6,6 +6,8 @@ public enum SensorType {
     TEMPERATURE("temperature"),
     HUMIDITY("humidity"),
     MATERIAL_HUMIDITY("material_humidity"),
+    PRESSURE("pressure"),
+    LIGHT("light"),
     MULTI("multi");
 
     @Getter

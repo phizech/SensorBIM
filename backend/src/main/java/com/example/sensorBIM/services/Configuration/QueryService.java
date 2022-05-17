@@ -90,7 +90,6 @@ public class QueryService {
             errorMessage = "upload.building.noStoreys";
         }
         if (errorMessage == null) {
-            buildingService.addBuilding(building);
             if (numberOfSensors == sensorService.findSensors().size()) {
                 return new Response<>(ResponseStatus.INFO, "upload.building.noSensors", null);
             }
@@ -100,6 +99,9 @@ public class QueryService {
             }
             buildingService.addBuilding(building);
             return new Response<>(ResponseStatus.SUCCESS, "upload.success", null);
+        }
+        if(buildingService.findBuildingByNameAndUser(building.getName(), building.getUser().getUsername())!=null){
+            buildingService.deleteBuilding(building);
         }
         return new Response<>(ResponseStatus.FAILURE, errorMessage, null);
     }
@@ -346,6 +348,10 @@ public class QueryService {
                             newSensor.setSensorType(SensorType.TEMPERATURE);
                         } else if (q.get("stringValue").asLiteral().getString().contains("Feucht")) {
                             newSensor.setSensorType(SensorType.HUMIDITY);
+                        } else if (q.get("stringValue").asLiteral().getString().contains("Licht")) {
+                            newSensor.setSensorType(SensorType.LIGHT);
+                        } else if (q.get("stringValue").asLiteral().getString().contains("Druck")) {
+                            newSensor.setSensorType(SensorType.PRESSURE);
                         }
                         break;
                     case "Bucketname":

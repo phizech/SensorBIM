@@ -16,11 +16,13 @@ export class ViewComponent implements OnInit {
   public data;
   public selectedSpaces;
   public rooms: Room[];
-  public allSensorTypes = ['Temperature', 'Humidity', 'Matrial_Humidity'];
+  public allSensorTypes = ['Temperature', 'Humidity', 'Matrial_Humidity', 'Light', 'Pressure'];
   public selectedSensorType: String = this.allSensorTypes[0];
   public levels;
   public selectedLevel: Level;
   public buildingId;
+
+  private intervalID: number;
 
   constructor(
     private http: HttpClient,
@@ -50,10 +52,11 @@ export class ViewComponent implements OnInit {
 
   async onChange() {
     this._s.getRoomsForLevel(this.selectedLevel.id).subscribe(async res => {
-      //    setInterval(async () => {         // replaced function() by ()=>
       this.rooms = res;
       this.data = await this._s._roomsToGeoJSON(res, this.selectedSensorType);
-      //  }, 1000); // 1000
+      this.intervalID = setInterval(async () => {
+      this.data = await this._s._roomsToGeoJSON(res, this.selectedSensorType);
+      }, 30000);
     }, err => console.log(err));
   }
 
@@ -64,6 +67,7 @@ export class ViewComponent implements OnInit {
 
   roomClick(ev) {
     this.selectedSpaces = [ev.uri];
+    clearInterval(this.intervalID);
     if (this.containsSensor(ev.uri)) {
       this.router.navigate(['/', this.buildingId, 'sensor', this.selectedLevel.id, ev.uri]);
     }

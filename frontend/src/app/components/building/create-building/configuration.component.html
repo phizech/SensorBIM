@@ -59,8 +59,8 @@
     <p [hidden]="!getUploading()">{{'button.building.create.uploading' | translate}}</p><br>
     <div [hidden]="!getUploading()" class="spinner-border" role="status">
       <span class="sr-only">Loading...</span>
+      <br><br>
     </div>
-    <br><br>
     <div class="modal-footer">
       <button class="btn btn-secondary" data-dismiss="modal" routerLink="/myBuildings"
               type="button">{{'button.common.back' | translate}}</button>
