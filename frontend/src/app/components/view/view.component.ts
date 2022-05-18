@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ViewService} from './view.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -11,7 +11,7 @@ import {SensorService} from '../sensor/sensor.service';
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.css', '../CssTemplates/tables.css']
 })
-export class ViewComponent implements OnInit {
+export class ViewComponent implements OnInit, OnDestroy {
 
   public data;
   public selectedSpaces;
@@ -42,6 +42,12 @@ export class ViewComponent implements OnInit {
     this.getLevels();
   }
 
+  ngOnDestroy() {
+    if (this.intervalID) {
+      clearInterval(this.intervalID);
+    }
+  }
+
   getLevels() {
     this._s.getLevels(this.buildingId).subscribe(res => {
       this.selectedLevel = res[0];
@@ -67,7 +73,6 @@ export class ViewComponent implements OnInit {
 
   roomClick(ev) {
     this.selectedSpaces = [ev.uri];
-    clearInterval(this.intervalID);
     if (this.containsSensor(ev.uri)) {
       this.router.navigate(['/', this.buildingId, 'sensor', this.selectedLevel.id, ev.uri]);
     }
