@@ -43,9 +43,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.intervalID) {
-      clearInterval(this.intervalID);
-    }
+    clearInterval(this.intervalID);
   }
 
   getLevels() {
@@ -60,9 +58,11 @@ export class ViewComponent implements OnInit, OnDestroy {
     this._s.getRoomsForLevel(this.selectedLevel.id).subscribe(async res => {
       this.rooms = res;
       this.data = await this._s._roomsToGeoJSON(res, this.selectedSensorType);
+      if (this.intervalID) { clearInterval(this.intervalID); }
       this.intervalID = setInterval(async () => {
       this.data = await this._s._roomsToGeoJSON(res, this.selectedSensorType);
       }, 30000);
+
     }, err => console.log(err));
   }
 
@@ -72,6 +72,7 @@ export class ViewComponent implements OnInit, OnDestroy {
   }
 
   roomClick(ev) {
+    console.log(ev);
     this.selectedSpaces = [ev.uri];
     if (this.containsSensor(ev.uri)) {
       this.router.navigate(['/', this.buildingId, 'sensor', this.selectedLevel.id, ev.uri]);

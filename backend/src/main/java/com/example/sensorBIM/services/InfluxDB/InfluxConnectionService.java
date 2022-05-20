@@ -138,24 +138,34 @@ public class InfluxConnectionService {
      * @return the latest measure point
      */
     public MeasurePoint getLatestMeasurementPoint(Room room, String measurement) {
+        String fluxQuery = getFluxQueryOfOneSensor(room, measurement);
+        return this.getMeasurementsOfSensors(room, fluxQuery).get(0);
+    }
+
+    public List<MeasurePoint> getMeasurementsOfAllSensors(Room room, String measurement){
+        String fluxQuery = getFluxQueryOfAllSensors(room, measurement);
+        return this.getMeasurementsOfSensors(room, fluxQuery);
+    }
+
+
+    public List<MeasurePoint> getMeasurementsOfSensors(Room room, String fluxQuery){
         try {
             Building building = room.getLevel().getBuilding();
             InfluxDBClient client = createInfluxClient(building.getInfluxDatabaseUrl(),
                     building.getInfluxDBToken().toCharArray(),
                     building.getOrganizationName(),
                     room.getSensors().iterator().next().getBucketName());
-            String fluxQuery = getFluxQuery(room, measurement);
+
             QueryApi queryApi = client.getQueryApi();
             List<FluxTable> res = queryApi.query(fluxQuery);
             if (res.isEmpty()) {
                 return null;
             }
-            return getData(res.get(0).getRecords()).get(0);
+            return getData(res.get(0).getRecords());
         } catch (Exception e) {
             return null;
         }
     }
-
     /**
      * if we want to get the latest measurements of the room, we also need all the sensors contained in the room
      * we create a query to get all the data of all the sensors
@@ -164,7 +174,7 @@ public class InfluxConnectionService {
      * @param measurement the measurement, e.g. humidity or temperature
      * @return the created flux query
      */
-    public String getFluxQuery(Room room, String measurement) {
+    public String getFluxQueryOfOneSensor(Room room, String measurement) {
         String query = "";
         List<String> tables = new ArrayList<>();
         for (Map.Entry<String, String> entry : getSensorIdsOfSensorsInRoom(room).entrySet()) {
@@ -173,6 +183,28 @@ public class InfluxConnectionService {
                     "  |> range(start: -48h)\n" +
                     "  |> filter(fn: (r) => r[\"_measurement\"] == \"" + measurement.toLowerCase() + "\")\n" +
                     "  |> filter(fn: (r) => " + entry.getValue() + ")\n" +
+                    "  |> last() \n";
+        }
+        if (tables.size() > 1) {
+            query += "union(tables: [" + String.join(", ", tables) + "])\n" +
+                    "  |> filter(fn: (r) => r[\"_field\"] == \"value\")  \n" +
+                    "  |> filter(fn: (r) => r[\"valid\"] == \"True\")\n" +
+                    "|> group()";
+        } else {
+            query += tables.get(0);
+        }
+        return query;
+    }
+
+    public String getFluxQueryOfAllSensors(Room room, String measurement) {
+        String query = "";
+        List<String> tables = new ArrayList<>();
+        for (Sensor s : room.getSensors()) {
+            tables.add(s.getBucketName()+s.getId());
+            query += s.getBucketName()+s.getId() + " = from(bucket: \"" + s.getBucketName() + "\")\n" +
+                    "  |> range(start: -48h)\n" +
+                    "  |> filter(fn: (r) => r[\"_measurement\"] == \"" + measurement.toLowerCase() + "\")\n" +
+                    "  |> filter(fn: (r) => " +  "r[\"" + getIdentifierInInflux(s) + "\"] == \"" + String.valueOf(s.getInfluxIdentifier()) + "\"" + ")\n" +
                     "  |> last() \n";
         }
         if (tables.size() > 1) {

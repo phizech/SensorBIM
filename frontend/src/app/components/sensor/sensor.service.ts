@@ -30,4 +30,8 @@ export class SensorService {
     (`${environment.apiBaseUrl}/influx/getSensorMeasurements/${levelId}/${roomUri}/${measurement}/${dateFrom}`);
   }
 
+  public getLatestMeasurementsForSensor(buildingId: number, levelId: number, roomName: string, selectedSensorType: String) {
+    return this.http.get<ResponseMessage>
+    (`${environment.apiBaseUrl}/influx/getLatestSensorMeasurements/${buildingId}/${levelId}/${roomName}/${selectedSensorType}`);
+  }
 }

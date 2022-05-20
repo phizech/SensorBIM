@@ -38,4 +38,7 @@ public class RoomService {
         return roomRepository.findAllRoomsForLevel(levelId);
     }
 
+    public Room findRoomByBuildingIdLevelIdAndRoomName(Long buildingId, Long levelId, String roomName) {
+        return roomRepository.findRoomByBuildingIdLevelIdAndRoomName(buildingId, levelId, roomName);
+    }
 }

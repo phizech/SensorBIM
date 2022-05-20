@@ -33,7 +33,7 @@ public class InfluxResourceTest {
     public void testGetLatestSensorMeasurementPoints() {
         Room room = roomService.findRoomByID(1L);
         if (roomContainsSensors(room)) {
-            Response<MeasurePoint> response = influxResource.getLatestSensorMeasurementPoints(room.getId(), "TEMPERATURE").getBody();
+            Response<MeasurePoint> response = influxResource.getLatestSensorMeasurementPoint(room.getId(), "TEMPERATURE").getBody();
             Assert.assertNotNull(response);
             MeasurePoint measurePoint = response.getBody();
             Assert.assertNotNull(measurePoint.getMeasurement());
@@ -52,7 +52,7 @@ public class InfluxResourceTest {
     public void testGetLatestSensorMeasurementPointsWithInvalidSensorType() {
         Room room = roomService.findRoomByID(1L);
         if (roomContainsSensors(room)) {
-            Response<MeasurePoint> response = influxResource.getLatestSensorMeasurementPoints(room.getId(), "some type").getBody();
+            Response<MeasurePoint> response = influxResource.getLatestSensorMeasurementPoint(room.getId(), "some type").getBody();
             assert response != null;
             Assert.assertEquals(ResponseStatus.FAILURE, response.getResponseStatus());
             Assert.assertNull(response.getBody());

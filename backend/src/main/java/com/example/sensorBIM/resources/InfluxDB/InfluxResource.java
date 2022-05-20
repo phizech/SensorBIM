@@ -78,8 +78,21 @@ public class InfluxResource {
         return (sensorType.equals(measurement)) || (sensorType.equals(SensorType.MULTI.getSensorTypeString().toUpperCase()));
     }
 
-    @GetMapping("/getLatestSensorMeasurements/{roomId}/{selectedSensorType}")
-    public ResponseEntity<Response<MeasurePoint>> getLatestSensorMeasurementPoints(@PathVariable("roomId") Long roomId, @PathVariable("selectedSensorType") String selectedSensorType) {
+    @GetMapping("/getLatestSensorMeasurements/{buildingId}/{levelId}/{roomName}/{selectedSensorType}")
+    public ResponseEntity<Response<List<MeasurePoint>>> getLatestSensorMeasurementPoints(@PathVariable("buildingId") Long buildingId,@PathVariable("levelId") Long levelId, @PathVariable("roomName") String roomName, @PathVariable("selectedSensorType") String selectedSensorType) {
+        Room room = roomService.findRoomByBuildingIdLevelIdAndRoomName(buildingId, levelId, roomName);
+        List<MeasurePoint> measurePoints = influxConnectionService.getMeasurementsOfAllSensors(room, selectedSensorType);
+        Response<List<MeasurePoint>> response;
+        if(measurePoints==null){
+            response = new Response<>(ResponseStatus.FAILURE, "Keine neuen Messungen", null);
+        } else {
+            response = new Response<>(ResponseStatus.SUCCESS, "", measurePoints);
+        }
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @GetMapping("/getLatestSensorMeasurement/{roomId}/{selectedSensorType}")
+    public ResponseEntity<Response<MeasurePoint>> getLatestSensorMeasurementPoint(@PathVariable("roomId") Long roomId, @PathVariable("selectedSensorType") String selectedSensorType) {
         Room room = roomService.findRoomByID(roomId);
         Sensor sensor = findSensorWithSelectedSensorType(room, selectedSensorType);
         Response<MeasurePoint> response;

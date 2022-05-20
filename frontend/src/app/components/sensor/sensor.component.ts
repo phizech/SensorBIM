@@ -1,4 +1,4 @@
-import {Component, OnInit, Renderer2} from '@angular/core';
+import {Component, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import {SensorService} from './sensor.service';
@@ -15,7 +15,7 @@ import {NotificationService} from '../response-notification/notification.service
   templateUrl: './sensor.component.html',
   styleUrls: ['../CssTemplates/tables.css', './sensor.css']
 })
-export class SensorComponent implements OnInit {
+export class SensorComponent implements OnInit, OnDestroy {
 
   public buildingId;
   public selectedSensors: Sensor[];
@@ -28,14 +28,16 @@ export class SensorComponent implements OnInit {
   public minMeasurement: MeasurePoint;
   public sensorTypesInRoom = new Set<SensorType>([]);
   public selectedSensorType: SensorType;
-  public today = new Date().toISOString().slice(0, 10);
+  public today = new Date();
   public date = new FormControl(new Date().toISOString().slice(0, 10));
   public mode = ['analysis', 'control'];
   public selectedMode = this.mode[0];
   public chart: any;
   public ctx: any;
+  private measurementsForChart: number[];
+  private intervalID;
+  private currentValues: number[];
 
-  public chartType = 'line';
   headers = {
     sensorName: 'Sensorname',
     sensorType: 'Sensortyp',
@@ -57,21 +59,55 @@ export class SensorComponent implements OnInit {
     private router: Router) {
   }
 
+  updateValues() {
+    if (this.intervalID) { clearInterval(this.intervalID); }
+    this.intervalID = setInterval(async () => {
+    this.sensorService.getLatestMeasurementsForSensor
+    (this.buildingId, this.levelId, this.roomUri, this.selectedSensorType).subscribe(res  => {
+      res.body.forEach(d => this.currentValues.push(d));
+      this.chart.data.datasets.forEach((dataset) => {
+          this.pushLatestValueToChart(res, dataset);
+      });
+      this.getDataForRoom(this.currentValues);
+      this.chart.update();
+    });
+    }, 30000);
+
+  }
+
+  pushLatestValueToChart(res, dataset) {
+    const element =  res.body.find(e => dataset.label.includes(e.sensorName));
+    if (element !== undefined) {
+      const data = dataset.data.push({x: element.time, y: element.value});
+      dataset.data.push(
+        {
+          'data': data,
+          'label': dataset.label,
+          'backgroundColor': 'transparent',
+          'borderColor': dataset.borderColor,
+          spanGaps: true
+        });
+    }
+  }
+
   createChart(rounding, days, unit) {
     if (this.chart) {
       this.chart.destroy();
     }
     this.ctx = document.getElementById('myChart');
-    const data = this.getXAndYValues();
+    this.measurementsForChart = this.getXAndYValues();
     const graphParams = {
       type: 'line',
       data: {
-        datasets: data,
+        datasets: this.measurementsForChart,
       },
       options: {
         maintainAspectRatio: true,
         scales: {
           xAxes: [{
+            ticks: {
+              maxTicksLimit: 10
+            },
             type: 'time',
             distribution: 'series',
             time: {
@@ -97,10 +133,16 @@ export class SensorComponent implements OnInit {
     this.getSensorsForRoom();
     this.selectedMode = this.mode[0];
     this.showSelectedMode('analysis');
+    this.updateValues();
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervalID) { clearInterval(this.intervalID); }
   }
 
   public onDate(): void {
-    const difference = (Date.parse(this.today) - Date.parse(this.date.toString())) / (1000 * 3600 * 24);
+    if (this.intervalID) { clearInterval(this.intervalID); }
+    const difference = (Date.parse(this.today.toISOString()) - Date.parse(this.date.toString())) / (1000 * 3600 * 24);
     let unit = 'hour';
     if (difference > 0) {
       unit = 'day';
@@ -152,17 +194,17 @@ export class SensorComponent implements OnInit {
     }
     const jsonObject = JSON.stringify(data);
     const csv = this.convertToCSV_(jsonObject);
-    const exportedFilenmae = 'Sensorwerte von ' + this.today + ' bis ' + this.date.value + '.csv';
+    const exportedFilename = 'Sensorwerte von ' + this.today + ' bis ' + this.date.value + '.csv';
 
     const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
     if (navigator.msSaveBlob) { // IE 10+
-      navigator.msSaveBlob(blob, exportedFilenmae);
+      navigator.msSaveBlob(blob, exportedFilename);
     } else {
       const link = document.createElement('a');
       if (link.download !== undefined) {
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
-        link.setAttribute('download', exportedFilenmae);
+        link.setAttribute('download', exportedFilename);
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
@@ -174,7 +216,7 @@ export class SensorComponent implements OnInit {
   public switchType(btn: SensorType) {
     this.selectedSensorType = btn;
     this.selectedSensors = this.sensors.filter(i => i.sensorType === btn);
-    this.getMeasurementsForSensor(true, 0, 'hour');
+    this.getMeasurementsForSensor(true, 0, 'minute');
   }
 
   public showSelectedMode(mode) {
@@ -199,7 +241,7 @@ export class SensorComponent implements OnInit {
       types.forEach(item => this.addItem(item));
       this.selectedSensors = res.filter(i => i.sensorType === this.sensorTypesInRoom.values().next().value);
       this.selectedSensorType = this.sensorTypesInRoom.keys().next().value;
-      this.getMeasurementsForSensor(true, 0, 'hour');
+      this.getMeasurementsForSensor(true, 0, 'minute');
     }, err => console.log(err));
   }
 
@@ -216,7 +258,9 @@ export class SensorComponent implements OnInit {
   private async getMeasurementsForSensor(rounding, days, unit) {
     let dateFrom: string;
     if (this.date.untouched) {
-      dateFrom = this.date.value.toString();
+      const d = new Date();
+      d.setHours(d.getHours() - 1);
+      dateFrom = d.toISOString();
     } else {
       dateFrom = this.date.toString();
     }
@@ -225,11 +269,17 @@ export class SensorComponent implements OnInit {
       res.forEach((response) => {
         if (response.responseStatus === ResponseStatus.SUCCESS) {
           this.measurements = new Map(Object.entries(response.body));
-          this.getDataForRoom(([]).concat(...Object.values(response.body)));
+          this.currentValues = ([]).concat(...Object.values(response.body));
+          this.getDataForRoom(this.currentValues);
           this.createChart(rounding, days, unit);
-          this.notify.notify(ResponseStatus.SUCCESS, response.message);
+          if (this.measurements.size === 0 ) {
+            this.notify.notify(ResponseStatus.WARNING, 'Keine Messungen gefunden');
+          } else {
+            this.notify.notify(ResponseStatus.SUCCESS, response.message);
+          }
+
         } else {
-          this.notify.notify(ResponseStatus.WARNING, response.message);
+          // this.notify.notify(ResponseStatus.WARNING, response.message);
         }
       });
       this.loading = false;
@@ -246,8 +296,10 @@ export class SensorComponent implements OnInit {
         const sensorData = [];
         const n = Math.round(value.length / 38);
         value.filter((measurement, index) => {
-          if (index % n === 0) {
-            sensorData.push({x: measurement.time, y: measurement.value});
+          if (measurement !== undefined) {
+            if (index % n === 0) {
+              sensorData.push({x: measurement.time, y: measurement.value});
+            }
           }
         });
         data.push(

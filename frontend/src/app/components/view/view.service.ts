@@ -73,7 +73,7 @@ export class ViewService {
   }
 
   private getLatestMeasurementForSensor(roomId: number, selectedSensorType: String) {
-    return this.http.get<ResponseMessage>(`${environment.apiBaseUrl}/influx/getLatestSensorMeasurements/${roomId}/${selectedSensorType}`);
+    return this.http.get<ResponseMessage>(`${environment.apiBaseUrl}/influx/getLatestSensorMeasurement/${roomId}/${selectedSensorType}`);
   }
 
   private geometryStringToArray(geometry): number[][] {
