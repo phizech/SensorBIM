@@ -74,7 +74,7 @@ public class UploadService {
             return response;
         }
         new File(Constants.UPLOAD_FILE_DIRECTORY).delete();
-        new File(Constants.OUTPUT_TTL).delete();
+        //new File(Constants.OUTPUT_TTL).delete();
         return response;
     }
 

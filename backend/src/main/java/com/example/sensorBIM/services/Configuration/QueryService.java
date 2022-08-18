@@ -5,7 +5,9 @@ import com.example.sensorBIM.HttpBody.ResponseStatus;
 import com.example.sensorBIM.model.*;
 import com.example.sensorBIM.model.Enums.SensorType;
 import com.example.sensorBIM.model.Enums.TransmissionType;
+import com.example.sensorBIM.repository.BuildingRepository;
 import com.example.sensorBIM.services.Building.BuildingService;
+import com.example.sensorBIM.services.Controller.BuildingElementService;
 import com.example.sensorBIM.services.Sensor.SensorService;
 import com.example.sensorBIM.services.Sensor.SwitchingDeviceService;
 import org.apache.jena.query.*;
@@ -37,6 +39,9 @@ public class QueryService {
 
     @Autowired
     private SwitchingDeviceService switchingDeviceService;
+
+    @Autowired
+    private BuildingElementService buildingElementService;
 
     private Dataset dataset;
 
@@ -138,6 +143,8 @@ public class QueryService {
         sensorsInRoom.forEachRemaining(sensor -> saveSensorsToDB(sensor, newRoom));
         ResultSet sensorsWithinBuildingElement = getSensorsWithinBuildingElements(newRoom.getUri());
         sensorsWithinBuildingElement.forEachRemaining(sensor -> saveSensorsToDB(sensor, newRoom));
+        ResultSet relatedElements = getRelatedElementsOfSpace(newRoom.getUri());
+        relatedElements.forEachRemaining(relatedElement -> saveBuildingElementToDB(relatedElement, newRoom));
     }
 
     /**
@@ -170,7 +177,7 @@ public class QueryService {
     public void saveSwitchingDevicesToDB(QuerySolution solution, Building building) {
         SwitchingDevice switchingDevice = new SwitchingDevice();
         switchingDevice.setName(solution.get("proxy_name").toString());
-        ResultSet deviceInformation = getSwitchingDeviceInformation(solution.get("proxy").toString());
+        ResultSet deviceInformation = getBuildingElementProxyInformation(solution.get("proxy").toString());
         setSwitchingDeviceInformation(switchingDevice, deviceInformation);
         Set<SwitchingDevice> devices = building.getSwitchingDevice();
         if (switchingDeviceService.isSavingSwitchingDeviceAllowed(switchingDevice)) {
@@ -178,6 +185,27 @@ public class QueryService {
             devices.add(switchingDevice);
             building.setSwitchingDevice(devices);
         }
+    }
+
+    /**
+     * save all the building elements to the database
+     *
+     * @param buildingElementQuery the query solution containing the information
+     * @param room   the room the sensor belongs to
+     */
+    public void saveBuildingElementToDB(QuerySolution buildingElementQuery, Room room) {
+        if ((buildingElementQuery == null) || room == null) {
+            return;
+        }
+        BuildingElement buildingElement = new BuildingElement();
+        buildingElement.setRoom(room);
+        buildingElement.setUri(buildingElementQuery.get("relatedSpace").toString());
+        ResultSet buildingElementInformation = getParameterValues(buildingElement.getUri());
+        setBuildingElementInformation(buildingElement, buildingElementInformation);
+        if(room.getRelatedBuildingElement() == null){
+            room.setRelatedBuildingElement(new HashSet<>());
+        }
+        room.getRelatedBuildingElement().add(buildingElement);
     }
 
     public ResultSet getLevels() {
@@ -407,28 +435,24 @@ public class QueryService {
                 .execSelect();
     }
 
-    private ResultSet getSwitchingDeviceInformation(String deviceUri) {
-        return QueryExecutionFactory
-                .create("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                        "PREFIX ifc: <http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#>\n" +
-                        "PREFIX express: <https://w3id.org/express#>\n" +
-                        "SELECT DISTINCT ?id_label ?stringValue  ?booleanValue WHERE {\n" +
-                        "    ?proxy_defines rdf:type  ifc:IfcRelDefinesByProperties .\n" +
-                        "    ?proxy_defines ifc:relatedObjects_IfcRelDefines <" + deviceUri + "> .\n" +
-                        "    <" + deviceUri + "> rdf:type  ifc:IfcBuildingElementProxy .\n" +
-                        "    <" + deviceUri + "> ifc:name_IfcRoot ?proxy_label .\n" +
-                        "    ?proxy_label express:hasString ?proxy_name .\n" +
-                        "    ?proxy_defines ifc:relatingPropertyDefinition_IfcRelDefinesByProperties ?properties .\n" +
-                        "    ?properties ifc:hasProperties_IfcPropertySet ?property_set .\n" +
-                        "    ?properties ifc:name_IfcRoot ?label_root .\n" +
-                        "    ?label_root express:hasString ?label_root_name .\n" +
-                        "    ?property_set ifc:nominalValue_IfcPropertySingleValue ?single_value .\n" +
-                        "    ?property_set ifc:name_IfcProperty ?identifier .\n" +
-                        "    ?identifier express:hasString ?id_label .\n" +
-                        "    OPTIONAL {?single_value express:hasString ?stringValue} .\n" +
-                        "    OPTIONAL {?single_value express:hasBoolean ?booleanValue} .\n" +
-                        "}\n", this.dataset)
-                .execSelect();
+    private ResultSet getRelatedElementsOfSpace(String uri){
+        return QueryExecutionFactory.create("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n" +
+                "PREFIX ifcowl: <http://ifcowl.openbimstandards.org/IFC2X3_TC1#> \n" +
+                "PREFIX express: <https://w3id.org/express#> \n" +
+                "PREFIX list: <https://w3id.org/list#> \n" +
+                "PREFIX ifc: <http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#>\n" +
+                "SELECT ?relatedSpace where { \n" +
+                "    ?spaceBoundary rdf:type ifc:IfcRelSpaceBoundary . \n" +
+                "    ?spaceBoundary ifc:relatingSpace_IfcRelSpaceBoundary ?space . \n" +
+                "    ?space ifc:longName_IfcSpatialStructureElement <" + uri + "> .\n" +
+                "    ?agr rdf:type ifc:IfcRelAggregates . \n" +
+                "    ?agr ifc:relatingObject_IfcRelDecomposes ?storey . \n" +
+                "    ?agr ifc:relatedObjects_IfcRelDecomposes ?space . \n" +
+                "    ?spaceBoundary ifc:relatedBuildingElement_IfcRelSpaceBoundary ?relatedSpace .\n" +
+                "    ?relatedSpace rdf:type ?type .\n" +
+                "FILTER (regex(str(?type), \"Wall\") || regex(str(?type), \"Slab\") || regex(str(?type), \"Roof\"))" +
+                "}\n",
+                dataset).execSelect();
     }
 
     private void setSwitchingDeviceInformation(SwitchingDevice device, ResultSet deviceInformation) {
@@ -471,6 +495,100 @@ public class QueryService {
             }
         }
     }
+    private ResultSet getBuildingElementProxyInformation(String elementUri) {
+        return QueryExecutionFactory
+                .create("PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                        "PREFIX ifc: <http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#>\n" +
+                        "PREFIX express: <https://w3id.org/express#>\n" +
+                        "SELECT DISTINCT ?id_label ?stringValue  ?booleanValue WHERE {\n" +
+                        "    ?proxy_defines rdf:type  ifc:IfcRelDefinesByProperties .\n" +
+                        "    ?proxy_defines ifc:relatedObjects_IfcRelDefines <" + elementUri + "> .\n" +
+                        "    <" + elementUri + "> rdf:type  ifc:IfcBuildingElementProxy .\n" +
+                        "    <" + elementUri + "> ifc:name_IfcRoot ?proxy_label .\n" +
+                        "    ?proxy_label express:hasString ?proxy_name .\n" +
+                        "    ?proxy_defines ifc:relatingPropertyDefinition_IfcRelDefinesByProperties ?properties .\n" +
+                        "    ?properties ifc:hasProperties_IfcPropertySet ?property_set .\n" +
+                        "    ?properties ifc:name_IfcRoot ?label_root .\n" +
+                        "    ?label_root express:hasString ?label_root_name .\n" +
+                        "    ?property_set ifc:nominalValue_IfcPropertySingleValue ?single_value .\n" +
+                        "    ?property_set ifc:name_IfcProperty ?identifier .\n" +
+                        "    ?identifier express:hasString ?id_label .\n" +
+                        "    OPTIONAL {?single_value express:hasString ?stringValue} .\n" +
+                        "    OPTIONAL {?single_value express:hasBoolean ?booleanValue} .\n" +
+                        "}\n", this.dataset)
+                .execSelect();
+    }
 
+    private ResultSet getParameterValues(String uri){
+        return QueryExecutionFactory.create("" +
+                        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                        "PREFIX ifc: <http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#>\n" +
+                        "PREFIX express: <https://w3id.org/express#>\n" +
+                        "SELECT DISTINCT ?typeParameterLabel ?stringValue ?doubleValue ?booleanValue WHERE \n" +
+                        "{\n" +
+                        "    {\n" +
+                        "        ?relatedType ifc:relatedObjects_IfcRelDefines <" + uri + "> .\n" +
+                        "        ?definesProperties ifc:relatedObjects_IfcRelDefines <" + uri + "> .\n" +
+                        "        ?definesProperties ifc:relatingPropertyDefinition_IfcRelDefinesByProperties ?propertySet .\n" +
+                        "        ?propertySet ifc:hasProperties_IfcPropertySet ?properties .\n" +
+                        "        ?properties ifc:name_IfcProperty ?label_root .\n" +
+                        "        ?label_root express:hasString ?typeParameterLabel .\n" +
+                        "        ?properties ifc:nominalValue_IfcPropertySingleValue ?single_value .\n" +
+                        "        OPTIONAL {?single_value express:hasString ?stringValue} .\n" +
+                        "        OPTIONAL {?single_value express:hasBoolean ?booleanValue} .\n" +
+                        "        OPTIONAL {?single_value express:hasDouble ?doubleValue} .\n" +
+                        "    } UNION {\n" +
+                        "        ?relatedType ifc:relatedObjects_IfcRelDefines <" + uri + "> .\n" +
+                        "        ?relatedType ifc:relatingType_IfcRelDefinesByType ?type .\n" +
+                        "        ?type ifc:hasPropertySets_IfcTypeObject ?TypePropertySet .\n" +
+                        "        ?type ifc:name_IfcRoot ?proxy_label .\n" +
+                        "        ?proxy_label express:hasString ?proxy_name .\n" +
+                        "        ?TypePropertySet ifc:hasProperties_IfcPropertySet ?properties .\n" +
+                        "        ?properties ifc:name_IfcProperty ?label_root .\n" +
+                        "        ?label_root express:hasString ?typeParameterLabel .\n" +
+                        "        ?properties ifc:nominalValue_IfcPropertySingleValue ?single_value .\n" +
+                        "        OPTIONAL {?single_value express:hasString ?stringValue} .\n" +
+                        "        OPTIONAL {?single_value express:hasBoolean ?booleanValue} .\n" +
+                        "        OPTIONAL {?single_value express:hasDouble ?doubleValue} .\n" +
+                        "    }\n" +
+                        "}"
+                , dataset).execSelect();
+    }
+    private void setBuildingElementInformation(BuildingElement buildingElement, ResultSet elementInformation) {
+        while (elementInformation.hasNext()) {
+            QuerySolution q = elementInformation.next();
+            String label = q.get("typeParameterLabel").toString();
+            try {
+                switch (label) {
+                    case "Area":
+                        buildingElement.setSurface((q.get("doubleValue").asLiteral().getDouble()));
+                        break;
+                    case "Thermal Resistance (R)": //""Thermischer Widerstand (R)":
+                        buildingElement.setHeatCapacity((q.get("doubleValue").asLiteral().getDouble()));
+                        break;
+                    case "Heat Transfer Coefficient (U)": //""Wärmedurchgangskoeffizient (U)":
+                        buildingElement.setConductance((q.get("doubleValue").asLiteral().getDouble()));
+                        break;
+                    //case "Thermisch Wirksame Masse":
+                    //    buildingElement.setConductance((q.get("doubleValue").asLiteral().getDouble()));
+                    //    break;
+                    case "Structural Material": //"Tragendes Material":
+                        // calculate density
+                        buildingElement.setDensityPerCMInGrams(buildingElementService.getDensityFromMaterial(q.get("stringValue").toString()));
+                        break;
+                    case "Family Name": //""Familienname":
+                        // calculate density
+                        if(Double.isNaN(buildingElement.getDensityPerCMInGrams())){
+                            buildingElement.setDensityPerCMInGrams(buildingElementService.getDensityFromMaterial(q.get("stringValue").toString()));
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            } catch (NullPointerException np) {
+                // sensor does contain null literals
 
+            }
+        }
+    }
 }

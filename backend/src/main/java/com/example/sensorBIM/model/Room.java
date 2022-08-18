@@ -38,6 +38,11 @@ public class Room {
     @JsonManagedReference
     private Set<Sensor> sensors;
 
+    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonManagedReference
+    private Set<BuildingElement> relatedBuildingElement;
+
     public Room(String name, String uri, String geometry, Level level) {
         this.name = name;
         this.uri = uri;
