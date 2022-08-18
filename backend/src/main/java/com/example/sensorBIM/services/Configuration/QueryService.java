@@ -561,22 +561,27 @@ public class QueryService {
             try {
                 switch (label) {
                     case "Area":
+                    case "Fläche":
                         buildingElement.setSurface((q.get("doubleValue").asLiteral().getDouble()));
                         break;
-                    case "Thermal Resistance (R)": //""Thermischer Widerstand (R)":
+                    case "Thermal Resistance (R)":
+                        case "Thermischer Widerstand (R)":
                         buildingElement.setHeatCapacity((q.get("doubleValue").asLiteral().getDouble()));
                         break;
-                    case "Heat Transfer Coefficient (U)": //""Wärmedurchgangskoeffizient (U)":
+                    case "Heat Transfer Coefficient (U)":
+                        case "Wärmedurchgangskoeffizient (U)":
                         buildingElement.setConductance((q.get("doubleValue").asLiteral().getDouble()));
                         break;
                     //case "Thermisch Wirksame Masse":
                     //    buildingElement.setConductance((q.get("doubleValue").asLiteral().getDouble()));
                     //    break;
-                    case "Structural Material": //"Tragendes Material":
+                    case "Structural Material":
+                        case "Tragendes Material":
                         // calculate density
                         buildingElement.setDensityPerCMInGrams(buildingElementService.getDensityFromMaterial(q.get("stringValue").toString()));
                         break;
-                    case "Family Name": //""Familienname":
+                    case "Family Name":
+                    case "Familienname":
                         // calculate density
                         if(Double.isNaN(buildingElement.getDensityPerCMInGrams())){
                             buildingElement.setDensityPerCMInGrams(buildingElementService.getDensityFromMaterial(q.get("stringValue").toString()));
