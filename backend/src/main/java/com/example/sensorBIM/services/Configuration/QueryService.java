@@ -2,10 +2,10 @@ package com.example.sensorBIM.services.Configuration;
 
 import com.example.sensorBIM.HttpBody.Response;
 import com.example.sensorBIM.HttpBody.ResponseStatus;
+import com.example.sensorBIM.IFC2EnergyPass.SimpleController;
 import com.example.sensorBIM.model.*;
 import com.example.sensorBIM.model.Enums.SensorType;
 import com.example.sensorBIM.model.Enums.TransmissionType;
-import com.example.sensorBIM.repository.BuildingRepository;
 import com.example.sensorBIM.services.Building.BuildingService;
 import com.example.sensorBIM.services.Controller.BuildingElementService;
 import com.example.sensorBIM.services.Sensor.SensorService;
@@ -103,6 +103,20 @@ public class QueryService {
                 user.setBuildings(new HashSet<>());
             }
             buildingService.addBuilding(building);
+
+            SimpleController controller = new SimpleController(null, null, null);
+            Timer timer = new Timer();
+
+            timer.scheduleAtFixedRate(new TimerTask() {
+                public void run() {
+                    try {
+                        controller.execute();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }, 1000, 60);
+
             return new Response<>(ResponseStatus.SUCCESS, "upload.success", null);
         }
         if(buildingService.findBuildingByNameAndUser(building.getName(), building.getUser().getUsername())!=null){
