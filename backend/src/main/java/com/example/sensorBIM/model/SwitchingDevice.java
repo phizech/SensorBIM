@@ -48,8 +48,7 @@ public class SwitchingDevice {
     @Column(name = "comment")
     private String comment;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "Building_ID")
-    @JsonBackReference
-    private Building building;
+    @OneToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
 }

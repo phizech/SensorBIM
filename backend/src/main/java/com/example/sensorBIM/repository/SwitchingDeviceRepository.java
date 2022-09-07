@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface SwitchingDeviceRepository extends JpaRepository<SwitchingDevice, Long> {
 
-    @Query("SELECT s FROM SwitchingDevice s WHERE s.building.id = :buildingId")
+    @Query("SELECT s FROM SwitchingDevice s WHERE s.room.level.building.id = :buildingId")
     Collection<SwitchingDevice> findAllSwitchingDevicesForBuilding(Long buildingId);
 
     @Query("SELECT s FROM SwitchingDevice s WHERE s.ip = :ip AND s.slug = :slug AND s.onPath = :onPath")

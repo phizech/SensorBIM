@@ -79,18 +79,16 @@ public class QueryService {
     public Response<Object> loadIFCOWL2Database(Building building, String outputTTL) {
         dataset = null;
         building.setLevels(new HashSet<>());
-        building.setSwitchingDevice(new HashSet<>());
         loadTTL(outputTTL);
         errorMessage = null;
         int numberOfSensors = sensorService.findSensors().size();
         ResultSet levels = getLevels();
-        ResultSet switchingDevices = getSwitchingDevice();
-        switchingDevices.forEachRemaining(device -> saveSwitchingDevicesToDB(device, building));
         if (dataset.isEmpty()) {
             errorMessage = "upload.file.invalidTurtle";
         } else if (levels.hasNext()) {
             if (buildingService.addBuilding(building) != null) {
-                levels.forEachRemaining(l -> saveLevelsToDB(l, building));
+                Building finalBuilding = building;
+                levels.forEachRemaining(l -> saveLevelsToDB(l, finalBuilding));
             } else {
                 errorMessage = "upload.failure";
             }
@@ -106,10 +104,25 @@ public class QueryService {
             if (user.getBuildings() == null) {
                 user.setBuildings(new HashSet<>());
             }
-            buildingService.addBuilding(building);
+            building = buildingService.addBuilding(building);
 
+            activateControllerForAllSwitchingDevicesInBuilding(building);
 
-            SimpleController controller = new SimpleController(null, null, null, influxConnectionService);
+            return new Response<>(ResponseStatus.SUCCESS, "upload.success", null);
+        }
+        if(buildingService.findBuildingByNameAndUser(building.getName(), building.getUser().getUsername())!=null){
+            buildingService.deleteBuilding(building);
+        }
+        return new Response<>(ResponseStatus.FAILURE, errorMessage, null);
+    }
+
+    private void activateControllerForAllSwitchingDevicesInBuilding(Building building) {
+        building.getLevels().forEach(l -> l.getRooms().forEach(this::activateController));
+    }
+
+    private void activateController(Room room){
+        if(room.getSwitchingDevice() != null){
+            SimpleController controller = new SimpleController(room.getTargetTemperature(), room, room.getSwitchingDevice(), influxConnectionService);
             Timer timer = new Timer();
 
             timer.scheduleAtFixedRate(new TimerTask() {
@@ -121,13 +134,9 @@ public class QueryService {
                     }
                 }
             }, 1000, 60);
+        }
 
-            return new Response<>(ResponseStatus.SUCCESS, "upload.success", null);
-        }
-        if(buildingService.findBuildingByNameAndUser(building.getName(), building.getUser().getUsername())!=null){
-            buildingService.deleteBuilding(building);
-        }
-        return new Response<>(ResponseStatus.FAILURE, errorMessage, null);
+
     }
 
     /**
@@ -155,15 +164,57 @@ public class QueryService {
      * @param level the level the room belongs to
      */
     public void saveRoomsToDB(QuerySolution room, Level level) {
-        Room newRoom = new Room(room.get("name").toString(), room.get("uri").toString(), convertToCoordinates(room.get("geometry2d").toString()).toString(), level);
+        Room newRoom = new Room(room.get("name").toString(), room.get("space").toString(), convertToCoordinates(room.get("geometry2d").toString()).toString(), level);
         newRoom.setSensors(new HashSet<>());
         level.getRooms().add(newRoom);
+
+        // add sensors to room
         ResultSet sensorsInRoom = getSensorsWithinRoom(newRoom.getUri());
         sensorsInRoom.forEachRemaining(sensor -> saveSensorsToDB(sensor, newRoom));
+
+        // add sensors, which are inside of walls, to room
         ResultSet sensorsWithinBuildingElement = getSensorsWithinBuildingElements(newRoom.getUri());
         sensorsWithinBuildingElement.forEachRemaining(sensor -> saveSensorsToDB(sensor, newRoom));
+
+        // add related element to room
         ResultSet relatedElements = getRelatedElementsOfSpace(newRoom.getUri());
         relatedElements.forEachRemaining(relatedElement -> saveBuildingElementToDB(relatedElement, newRoom));
+
+        // add information, e.g. volume, to room
+        ResultSet roomInformation = getElementInformation(newRoom.getUri());
+        setRoomInformation(newRoom, roomInformation);
+
+        // add switching device to room
+        ResultSet switchingDevices = getSwitchingDevice(newRoom.getUri());
+        switchingDevices.forEachRemaining(device -> saveSwitchingDevicesToDB(device, newRoom));
+    }
+
+    private void setRoomInformation(Room newRoom, ResultSet roomInformation) {
+        while (roomInformation.hasNext()) {
+            QuerySolution q = roomInformation.next();
+            String label = q.get("id_label").toString();
+            try {
+                switch (label) {
+                    case "Luftaustauschrate":
+                        newRoom.setAirExchangeRate(q.get("doubleValue").asLiteral().getDouble());
+                        break;
+                    case "Volumen":
+                        newRoom.setRoomVolume(q.get("doubleValue").asLiteral().getDouble());
+                        break;
+                    case "Thermische Masse":
+                        newRoom.setThermalMass(q.get("doubleValue").asLiteral().getDouble());
+                        break;
+                    case "Solltemperatur":
+                        newRoom.setTargetTemperature(q.get("doubleValue").asLiteral().getDouble());
+                        break;
+                    default:
+                        break;
+                }
+            } catch (NullPointerException np) {
+                // sensor does contain null literals
+
+            }
+        }
     }
 
     /**
@@ -180,7 +231,7 @@ public class QueryService {
         Sensor newSensor = new Sensor();
         newSensor.setUri(sensorUri);
         newSensor.setRoom(room);
-        ResultSet sensorInformation = getSensorInformation(sensorUri);
+        ResultSet sensorInformation = getElementInformation(sensorUri);
         setSensorInformation(newSensor, sensorInformation);
         if (sensorService.isSavingSensorAllowed(newSensor)) {
             room.getSensors().add(newSensor);
@@ -191,18 +242,16 @@ public class QueryService {
      * save all the switching devices to the database
      *
      * @param solution the query solution containing the information
-     * @param building the building the switching devices belong to
+     * @param room the room the switching devices belong to
      */
-    public void saveSwitchingDevicesToDB(QuerySolution solution, Building building) {
+    public void saveSwitchingDevicesToDB(QuerySolution solution, Room room) {
         SwitchingDevice switchingDevice = new SwitchingDevice();
         switchingDevice.setName(solution.get("proxy_name").toString());
         ResultSet deviceInformation = getBuildingElementProxyInformation(solution.get("proxy").toString());
         setSwitchingDeviceInformation(switchingDevice, deviceInformation);
-        Set<SwitchingDevice> devices = building.getSwitchingDevice();
         if (switchingDeviceService.isSavingSwitchingDeviceAllowed(switchingDevice)) {
-            switchingDevice.setBuilding(building);
-            devices.add(switchingDevice);
-            building.setSwitchingDevice(devices);
+            switchingDevice.setRoom(room);
+            room.setSwitchingDevice(switchingDevice);
         }
     }
 
@@ -251,7 +300,7 @@ public class QueryService {
                 "PREFIX express: <https://w3id.org/express#> \n" +
                 "PREFIX list: <https://w3id.org/list#> \n" +
                 "PREFIX ifc: <http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#>\n" +
-                "SELECT ?name ?uri (GROUP_CONCAT(CONCAT(\"[\",STR(?x_Value), \", \", STR(?y_Value), \"]\") ; SEPARATOR = \", \" ) AS ?geometry2d) { \n" +
+                "SELECT ?name ?space (GROUP_CONCAT(CONCAT(\"[\",STR(?x_Value), \", \", STR(?y_Value), \"]\") ; SEPARATOR = \", \" ) AS ?geometry2d) { \n" +
                 "    SELECT * where { \n" +
                 "        ?spaceBoundary rdf:type ifc:IfcRelSpaceBoundary . \n" +
                 "        ?spaceBoundary ifc:relatingSpace_IfcRelSpaceBoundary ?space . \n" +
@@ -260,12 +309,11 @@ public class QueryService {
                 "        ?agr ifc:relatedObjects_IfcRelDecomposes ?space . \n" +
                 "        ?spaceBoundary ifc:relatedBuildingElement_IfcRelSpaceBoundary ?type . \n" +
                 "        ?type rdf:type ifc:IfcWallStandardCase . \n" +
-                "        ?space ifc:longName_IfcSpatialStructureElement ?uri . \n" +
-                "        ?uri express:hasString ?name . \n" +
+                "        ?space ifc:longName_IfcSpatialStructureElement ?label . \n" +
                 "        ?spaceBoundary rdf:type  ifc:IfcRelSpaceBoundary . \n" +
                 "        ?spaceBoundary ifc:relatingSpace_IfcRelSpaceBoundary ?space . \n" +
-                "        ?space ifc:longName_IfcSpatialStructureElement ?uri . \n" +
-                "        ?uri express:hasString ?name . \n" +
+                "        ?space ifc:longName_IfcSpatialStructureElement ?label . \n" +
+                "        ?label express:hasString ?name . \n" +
                 "        ?spaceBoundary ifc:connectionGeometry_IfcRelSpaceBoundary ?connectionSurface . \n" +
                 "        ?connectionSurface ifc:surfaceOnRelatingElement_IfcConnectionSurfaceGeometry ?surface . \n" +
                 "        ?surface ifc:sweptCurve_IfcSweptSurface ?openProfileDef . \n" +
@@ -280,7 +328,7 @@ public class QueryService {
                 "        ?y express:hasDouble ?y_Value . \n" +
                 "    } ORDER BY asc(?cartesianPoint) \n" +
                 "}\n" +
-                "GROUP BY ?name ?uri";
+                "GROUP BY ?name ?space";
         return QueryExecutionFactory
                 .create(query, this.dataset)
                 .execSelect();
@@ -415,15 +463,15 @@ public class QueryService {
 
     }
 
-    public ResultSet getSensorInformation(String sensorUri) {
+    public ResultSet getElementInformation(String elementUri) {
         return QueryExecutionFactory
                 .create("PREFIX ifc: <http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#>\n" +
                         "PREFIX express: <https://w3id.org/express#>\n" +
                         "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
                         "select ?id_label ?doubleValue ?stringValue ?booleanValue where { \n" +
                         "    ?props rdf:type  ifc:IfcRelDefinesByProperties .\n" +
-                        "    ?props ifc:relatedObjects_IfcRelDefines <" + sensorUri + ">.\n" +
-                        "\t<" + sensorUri + "> ifc:name_IfcRoot ?proxy_label .\n" +
+                        "    ?props ifc:relatedObjects_IfcRelDefines <" + elementUri + ">.\n" +
+                        "\t<" + elementUri + "> ifc:name_IfcRoot ?proxy_label .\n" +
                         "    ?proxy_label express:hasString ?proxy_name .\n" +
                         "    ?props ifc:relatingPropertyDefinition_IfcRelDefinesByProperties ?properties .\n" +
                         "    ?properties ifc:hasProperties_IfcPropertySet ?property_set .\n" +
@@ -439,18 +487,20 @@ public class QueryService {
                 .execSelect();
     }
 
-    private ResultSet getSwitchingDevice() {
+    private ResultSet getSwitchingDevice(String roomUri) {
         return QueryExecutionFactory
                 .create("PREFIX ifc: <http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#>\n" +
                         "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
                         "PREFIX express: <https://w3id.org/express#>\n" +
                         "Select DISTINCT *  where {\n" +
                         "    ?proxy ifc:objectType_IfcObject ?proxy_type .\n" +
+                        "    ?spatialStructure ifc:relatedElements_IfcRelContainedInSpatialStructure ?proxy .\n" +
+                        "    ?spatialStructure ifc:relatingStructure_IfcRelContainedInSpatialStructure <" + roomUri + "> .\n" +
                         "    ?proxy_type express:hasString ?proxy_type_name .\n" +
                         "    ?proxy ifc:name_IfcRoot ?proxy_label .\n" +
                         "    ?proxy_label express:hasString ?proxy_name .\n" +
-                        "    filter contains(?proxy_name,\"Steuer\")   \n" +
-                        "} ", this.dataset)
+                        "    filter contains(?proxy_name,\"Steuer\") \n" +
+                        "}", this.dataset)
                 .execSelect();
     }
 
@@ -509,7 +559,7 @@ public class QueryService {
                         break;
                 }
             } catch (NullPointerException np) {
-                // sensor does contain null literals
+                // sensor contains null literals
 
             }
         }

@@ -14,7 +14,7 @@ public class SimpleController implements Strategy {
     private SwitchingDevice switchingDevice = null;
     private InfluxConnectionService influxConnectionService;
 
-    public SimpleController(int setPoint, Room room, SwitchingDevice switchingDevice, InfluxConnectionService influxConnectionService, SwitchingDeviceService switchingDeviceService) {
+    public SimpleController(Double setPoint, Room room, SwitchingDevice switchingDevice, InfluxConnectionService influxConnectionService) {
         this.setPoint = setPoint;
         this.room = room;
         this.switchingDevice = switchingDevice;

@@ -1,5 +1,6 @@
 package com.example.sensorBIM.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +27,17 @@ public class Room {
     @Column(nullable = false, name = "Uri")
     private String uri;
 
+    @Column(nullable = false, name = "ThermalMass")
+    private Double thermalMass;
+
+    @Column(nullable = false, name = "airExchangeRate")
+    private Double airExchangeRate;
+
+    @Column(nullable = false, name = "targetTemperature")
+    private Double targetTemperature;
+
+    @Column(nullable = false, name = "volume")
+    private Double roomVolume;
     @Column(columnDefinition = "TEXT", nullable = false, name = "Geometry")
     private String geometry;
 
@@ -42,6 +54,11 @@ public class Room {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonManagedReference
     private Set<BuildingElement> relatedBuildingElement;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "room", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private SwitchingDevice switchingDevice;
 
     public Room(String name, String uri, String geometry, Level level) {
         this.name = name;

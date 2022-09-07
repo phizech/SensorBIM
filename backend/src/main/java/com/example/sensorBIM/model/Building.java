@@ -43,10 +43,6 @@ public class Building {
     @JoinColumn(name = "User_ID")
     private User user;
 
-    @OneToMany(mappedBy = "building", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonManagedReference
-    private Set<SwitchingDevice> switchingDevice;
 
     public Building() {
 
