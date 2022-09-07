@@ -8,6 +8,7 @@ import com.example.sensorBIM.model.Enums.SensorType;
 import com.example.sensorBIM.model.Enums.TransmissionType;
 import com.example.sensorBIM.services.Building.BuildingService;
 import com.example.sensorBIM.services.Controller.BuildingElementService;
+import com.example.sensorBIM.services.InfluxDB.InfluxConnectionService;
 import com.example.sensorBIM.services.Sensor.SensorService;
 import com.example.sensorBIM.services.Sensor.SwitchingDeviceService;
 import org.apache.jena.query.*;
@@ -42,6 +43,9 @@ public class QueryService {
 
     @Autowired
     private BuildingElementService buildingElementService;
+
+    @Autowired
+    private InfluxConnectionService influxConnectionService;
 
     private Dataset dataset;
 
@@ -104,7 +108,8 @@ public class QueryService {
             }
             buildingService.addBuilding(building);
 
-            SimpleController controller = new SimpleController(null, null, null);
+
+            SimpleController controller = new SimpleController(null, null, null, influxConnectionService);
             Timer timer = new Timer();
 
             timer.scheduleAtFixedRate(new TimerTask() {
