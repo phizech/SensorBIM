@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import javax.transaction.Transactional;
 import java.io.FileInputStream;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -129,10 +130,11 @@ public class QueryService {
                         try {
                             controller.execute();
                         } catch (Exception e) {
+                            timer.cancel();
                             throw new RuntimeException(e);
                         }
                     }
-                }, 1000, 60);
+                }, 1000, 60000);
             }
         }
 

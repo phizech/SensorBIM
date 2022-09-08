@@ -35,7 +35,7 @@ public class SimpleController implements Strategy {
     }
 
     private double getCurrentTemperature() {
-        var measurement = influxConnectionService.getLatestMeasurementPoint(room, "temperature");
+        var measurement = influxConnectionService.getLatestMeasurementPoint(room, "Temperature");
         return (double) measurement.getValue();
     }
 }

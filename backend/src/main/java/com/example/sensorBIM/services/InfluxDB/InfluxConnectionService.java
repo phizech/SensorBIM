@@ -135,6 +135,7 @@ public class InfluxConnectionService {
      * @return the latest measure point
      */
     public MeasurePoint getLatestMeasurementPoint(Room room, String measurement) {
+        if(room.getSensors().isEmpty()) return null;
         String fluxQuery = getFluxQueryOfOneSensor(room, measurement);
         List<MeasurePoint> measurePoints = this.getMeasurementsOfSensors(room, fluxQuery);
         if(measurePoints.isEmpty()){
