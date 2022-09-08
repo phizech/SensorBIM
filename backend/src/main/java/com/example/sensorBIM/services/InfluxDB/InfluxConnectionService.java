@@ -29,7 +29,7 @@ public class InfluxConnectionService {
 
     /**
      * tests whether the entered url of the building is valid. for that we try to ping it, if we get a response it
-     * is valid, if not, we return false, indicating the url is not vald
+     * is valid, if not, we return false, indicating the url is not valid
      *
      * @param databaseURL the url of the building
      * @return true if the url is valid, false if not
@@ -38,10 +38,7 @@ public class InfluxConnectionService {
         try {
             final InfluxDB influxDB = InfluxDBFactory.connect(databaseURL);
             Pong response = influxDB.ping();
-            if (response.getVersion().equalsIgnoreCase("unknown")) {
-                return false;
-            }
-            return true;
+            return !response.getVersion().equalsIgnoreCase("unknown");
         } catch (Exception e) {
             return false;
         }
@@ -139,7 +136,11 @@ public class InfluxConnectionService {
      */
     public MeasurePoint getLatestMeasurementPoint(Room room, String measurement) {
         String fluxQuery = getFluxQueryOfOneSensor(room, measurement);
-        return this.getMeasurementsOfSensors(room, fluxQuery).get(0);
+        List<MeasurePoint> measurePoints = this.getMeasurementsOfSensors(room, fluxQuery);
+        if(measurePoints.isEmpty()){
+            return null;
+        }
+        return measurePoints.get(0);
     }
 
     public List<MeasurePoint> getMeasurementsOfAllSensors(Room room, String measurement){
@@ -175,47 +176,33 @@ public class InfluxConnectionService {
      * @return the created flux query
      */
     public String getFluxQueryOfOneSensor(Room room, String measurement) {
-        String query = "";
+        StringBuilder query = new StringBuilder();
         List<String> tables = new ArrayList<>();
         for (Map.Entry<String, String> entry : getSensorIdsOfSensorsInRoom(room).entrySet()) {
             tables.add(entry.getKey());
-            query += entry.getKey() + " = from(bucket: \"" + entry.getKey() + "\")\n" +
-                    "  |> range(start: -48h)\n" +
-                    "  |> filter(fn: (r) => r[\"_measurement\"] == \"" + measurement.toLowerCase() + "\")\n" +
-                    "  |> filter(fn: (r) => " + entry.getValue() + ")\n" +
-                    "  |> last() \n";
+            query.append(entry.getKey()).append(" = from(bucket: \"").append(entry.getKey()).append("\")\n").append("  |> range(start: -48h)\n").append("  |> filter(fn: (r) => r[\"_measurement\"] == \"").append(measurement.toLowerCase()).append("\")\n").append("  |> filter(fn: (r) => ").append(entry.getValue()).append(")\n").append("  |> last() \n");
         }
         if (tables.size() > 1) {
-            query += "union(tables: [" + String.join(", ", tables) + "])\n" +
-                    "  |> filter(fn: (r) => r[\"_field\"] == \"value\")  \n" +
-                    "  |> filter(fn: (r) => r[\"valid\"] == \"True\")\n" +
-                    "|> group()";
+            query.append("union(tables: [").append(String.join(", ", tables)).append("])\n").append("  |> filter(fn: (r) => r[\"_field\"] == \"value\")  \n").append("  |> filter(fn: (r) => r[\"valid\"] == \"True\")\n").append("|> group()");
         } else {
-            query += tables.get(0);
+            query.append(tables.get(0));
         }
-        return query;
+        return query.toString();
     }
 
     public String getFluxQueryOfAllSensors(Room room, String measurement) {
-        String query = "";
+        StringBuilder query = new StringBuilder();
         List<String> tables = new ArrayList<>();
         for (Sensor s : room.getSensors()) {
             tables.add(s.getBucketName()+s.getId());
-            query += s.getBucketName()+s.getId() + " = from(bucket: \"" + s.getBucketName() + "\")\n" +
-                    "  |> range(start: -48h)\n" +
-                    "  |> filter(fn: (r) => r[\"_measurement\"] == \"" + measurement.toLowerCase() + "\")\n" +
-                    "  |> filter(fn: (r) => " +  "r[\"" + getIdentifierInInflux(s) + "\"] == \"" + String.valueOf(s.getInfluxIdentifier()) + "\"" + ")\n" +
-                    "  |> last() \n";
+            query.append(s.getBucketName()).append(s.getId()).append(" = from(bucket: \"").append(s.getBucketName()).append("\")\n").append("  |> range(start: -48h)\n").append("  |> filter(fn: (r) => r[\"_measurement\"] == \"").append(measurement.toLowerCase()).append("\")\n").append("  |> filter(fn: (r) => ").append("r[\"").append(getIdentifierInInflux(s)).append("\"] == \"").append(String.valueOf(s.getInfluxIdentifier())).append("\"").append(")\n").append("  |> last() \n");
         }
         if (tables.size() > 1) {
-            query += "union(tables: [" + String.join(", ", tables) + "])\n" +
-                    "  |> filter(fn: (r) => r[\"_field\"] == \"value\")  \n" +
-                    "  |> filter(fn: (r) => r[\"valid\"] == \"True\")\n" +
-                    "|> group()";
+            query.append("union(tables: [").append(String.join(", ", tables)).append("])\n").append("  |> filter(fn: (r) => r[\"_field\"] == \"value\")  \n").append("  |> filter(fn: (r) => r[\"valid\"] == \"True\")\n").append("|> group()");
         } else {
-            query += tables.get(0);
+            query.append(tables.get(0));
         }
-        return query;
+        return query.toString();
     }
 
     /**

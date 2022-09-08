@@ -19,6 +19,7 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 
 @Component
 @Scope("application")
@@ -39,7 +40,7 @@ public class SwitchingDeviceService {
      * get all the switching devices contained in a building and get the status of them
      *
      * @param buildingId the id of the building of which we want to get the data
-     * @return a colletion of all the switching devices contained in the building
+     * @return a collection of all the switching devices contained in the building
      */
     public Collection<SwitchingDeviceResult> findSwitchingDevicesByBuildingId(Long buildingId) {
         Collection<SwitchingDevice> devices = switchingDeviceRepository.findAllSwitchingDevicesForBuilding(buildingId);
@@ -61,12 +62,19 @@ public class SwitchingDeviceService {
 
     /**
      * only saves the switching devices if it is valid. in this case we check if the path is unique
-     *
+     * and all the properties of the switching device are valid: on/off and status path should contain a value
      * @param switchingDevice the switching device we want to save
      * @return true, if saving the device is allowed
      */
     public boolean isSavingSwitchingDeviceAllowed(SwitchingDevice switchingDevice) {
-        return switchingDevicePathsUnique(switchingDevice);
+        return switchingDevicePathsUnique(switchingDevice) && hasValidProperties(switchingDevice);
+    }
+
+    private boolean hasValidProperties(SwitchingDevice switchingDevice) {
+        return !Objects.equals(switchingDevice.getIp(), "") &&
+                !Objects.equals(switchingDevice.getOffPath(), "") &&
+                !Objects.equals(switchingDevice.getOnPath(), "") &&
+                !Objects.equals(switchingDevice.getStatusPath(), "");
     }
 
     /**
@@ -193,5 +201,9 @@ public class SwitchingDeviceService {
         }
         res.setDevice(device);
         return res;
+    }
+
+    public void deleteDevice(SwitchingDevice switchingDeviceResult) {
+        switchingDeviceRepository.delete(switchingDeviceResult);
     }
 }

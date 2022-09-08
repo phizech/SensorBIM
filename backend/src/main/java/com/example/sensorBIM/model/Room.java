@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -55,20 +56,21 @@ public class Room {
     @JsonManagedReference
     private Set<BuildingElement> relatedBuildingElement;
 
-    @JsonIgnore
-    @OneToOne(mappedBy = "room", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "room", cascade = CascadeType.PERSIST)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private SwitchingDevice switchingDevice;
+    @JsonManagedReference
+    private Set<SwitchingDevice> switchingDevices;
 
     public Room(String name, String uri, String geometry, Level level) {
         this.name = name;
         this.uri = uri;
         this.geometry = geometry;
         this.level = level;
+        this.switchingDevices = new HashSet<>();
     }
 
     public Room() {
-
+        this.switchingDevices = new HashSet<>();
     }
 
 }

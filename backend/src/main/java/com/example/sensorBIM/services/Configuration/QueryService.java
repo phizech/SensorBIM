@@ -104,10 +104,8 @@ public class QueryService {
             if (user.getBuildings() == null) {
                 user.setBuildings(new HashSet<>());
             }
-            building = buildingService.addBuilding(building);
-
+            buildingService.addBuilding(building);
             activateControllerForAllSwitchingDevicesInBuilding(building);
-
             return new Response<>(ResponseStatus.SUCCESS, "upload.success", null);
         }
         if(buildingService.findBuildingByNameAndUser(building.getName(), building.getUser().getUsername())!=null){
@@ -121,19 +119,21 @@ public class QueryService {
     }
 
     private void activateController(Room room){
-        if(room.getSwitchingDevice() != null){
-            SimpleController controller = new SimpleController(room.getTargetTemperature(), room, room.getSwitchingDevice(), influxConnectionService);
-            Timer timer = new Timer();
+        for (SwitchingDevice switchingDevice : room.getSwitchingDevices()){
+            if(switchingDevice != null){
+                SimpleController controller = new SimpleController(room.getTargetTemperature(), room, switchingDevice, influxConnectionService);
+                Timer timer = new Timer();
 
-            timer.scheduleAtFixedRate(new TimerTask() {
-                public void run() {
-                    try {
-                        controller.execute();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    public void run() {
+                        try {
+                            controller.execute();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
-                }
-            }, 1000, 60);
+                }, 1000, 60);
+            }
         }
 
 
@@ -251,7 +251,7 @@ public class QueryService {
         setSwitchingDeviceInformation(switchingDevice, deviceInformation);
         if (switchingDeviceService.isSavingSwitchingDeviceAllowed(switchingDevice)) {
             switchingDevice.setRoom(room);
-            room.setSwitchingDevice(switchingDevice);
+            room.getSwitchingDevices().add(switchingDevice);
         }
     }
 
@@ -358,27 +358,40 @@ public class QueryService {
 
     public ResultSet getSensorsWithinRoom(String roomUri) {
         return QueryExecutionFactory
-                .create("\n" +
-                        "PREFIX ifc: <http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#>\n" +
+                .create("PREFIX ifc: <http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#>\n" +
                         "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
                         "PREFIX express: <https://w3id.org/express#>\n" +
-                        "Select DISTINCT ?name ?proxy_name ?proxy where {\n" +
+                        "Select DISTINCT ?proxy_name ?proxy where {\n" +
                         "    ?spatial_Structure ifc:relatedElements_IfcRelContainedInSpatialStructure  ?proxy .\n" +
-                        "    ?spatial_Structure ifc:relatingStructure_IfcRelContainedInSpatialStructure  ?s.\n" +
+                        "    ?spatial_Structure ifc:relatingStructure_IfcRelContainedInSpatialStructure  <" + roomUri + "> .\n" +
                         "    ?spatial_Structure rdf:type  ifc:IfcRelContainedInSpatialStructure .\n" +
                         "    ?proxy ifc:objectType_IfcObject ?proxy_type .\n" +
-                        "    ?proxy_type express:hasString ?proxy_type_name .\n" +
-                        "    ?s rdf:type ifc:IfcSpace .  \n" +
-                        "    ?s ifc:longName_IfcSpatialStructureElement <" + roomUri + "> .\n" +
-                        "    <" + roomUri + "> express:hasString ?name .\n" +
                         "    ?proxy ifc:name_IfcRoot ?proxy_label .\n" +
                         "    ?proxy_label express:hasString ?proxy_name .\n" +
-                        "    filter contains(?proxy_name,\"sensor\") " +
-                        "} ", this.dataset)
+                        "    filter contains(?proxy_name,\"sensor\") } ", this.dataset)
                 .execSelect();
     }
 
     public ResultSet getSensorsWithinBuildingElements(String roomUri) {
+        String query = "" +
+                "PREFIX ifc: <http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#>\n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "\n" +
+                "PREFIX express: <https://w3id.org/express#>\n" +
+                "SELECT DISTINCT ?proxy ?name WHERE {\n" +
+                "\t?space rdf:type  ifc:IfcSpace .\n" +
+                "    ?space ifc:name_IfcRoot ?label .\n" +
+                "    ?rel rdf:type  ifc:IfcRelSpaceBoundary .\n" +
+                "    ?rel ifc:relatingSpace_IfcRelSpaceBoundary ?space .\n" +
+                "    ?space ifc:longName_IfcSpatialStructureElement <" + roomUri + "> .\n" +
+                "    ?rel ifc:relatedBuildingElement_IfcRelSpaceBoundary ?buildingElement .\n" +
+                "    ?buildingElement  rdf:type ifc:IfcWallStandardCase .  \n" +
+                "    ?el rdf:type ifc:IfcRelVoidsElement .\n" +
+                "    ?el ifc:relatingBuildingElement_IfcRelVoidsElement ?buildingElement .\n" +
+                "    ?el ifc:relatedOpeningElement_IfcRelVoidsElement ?proxy .\n" +
+                "    ?space ifc:longName_IfcSpatialStructureElement ?uri . \n" +
+                "    ?uri express:hasString ?name . \n" +
+                "}\n";
         return QueryExecutionFactory
                 .create("" +
                         "PREFIX ifc: <http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#>\n" +
@@ -389,15 +402,12 @@ public class QueryService {
                         "\t?space rdf:type  ifc:IfcSpace .\n" +
                         "    ?space ifc:name_IfcRoot ?label .\n" +
                         "    ?rel rdf:type  ifc:IfcRelSpaceBoundary .\n" +
-                        "    ?rel ifc:relatingSpace_IfcRelSpaceBoundary ?space .\n" +
-                        "    ?space ifc:longName_IfcSpatialStructureElement <" + roomUri + "> .\n" +
+                        "    ?rel ifc:relatingSpace_IfcRelSpaceBoundary <" + roomUri + "> .\n" +
                         "    ?rel ifc:relatedBuildingElement_IfcRelSpaceBoundary ?buildingElement .\n" +
                         "    ?buildingElement  rdf:type ifc:IfcWallStandardCase .  \n" +
                         "    ?el rdf:type ifc:IfcRelVoidsElement .\n" +
                         "    ?el ifc:relatingBuildingElement_IfcRelVoidsElement ?buildingElement .\n" +
                         "    ?el ifc:relatedOpeningElement_IfcRelVoidsElement ?proxy .\n" +
-                        "    ?space ifc:longName_IfcSpatialStructureElement ?uri . \n" +
-                        "    ?uri express:hasString ?name . \n" +
                         "}\n", this.dataset)
                 .execSelect();
     }
@@ -435,6 +445,7 @@ public class QueryService {
                             newSensor.setTransmissionType(TransmissionType.CABLE_BOUND);
                         }
                         break;
+                    case "Typ":
                     case "Type":
                         if (q.get("stringValue").asLiteral().getString().contains("Multi")) {
                             //set to multi
@@ -449,7 +460,7 @@ public class QueryService {
                             newSensor.setSensorType(SensorType.PRESSURE);
                         }
                         break;
-                    case "Bucketname":
+                    case "Bucket Name":
                         newSensor.setBucketName(q.get("stringValue").toString());
                         break;
                     default:

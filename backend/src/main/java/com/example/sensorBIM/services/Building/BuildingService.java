@@ -3,8 +3,10 @@ package com.example.sensorBIM.services.Building;
 import com.example.sensorBIM.HttpBody.Response;
 import com.example.sensorBIM.HttpBody.ResponseStatus;
 import com.example.sensorBIM.model.Building;
+import com.example.sensorBIM.model.SwitchingDevice;
 import com.example.sensorBIM.repository.BuildingRepository;
 import com.example.sensorBIM.services.InfluxDB.InfluxConnectionService;
+import com.example.sensorBIM.services.Sensor.SwitchingDeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,9 @@ public class BuildingService {
 
     @Autowired
     private InfluxConnectionService influxConnectionService;
+
+    @Autowired
+    private SwitchingDeviceService switchingDeviceService;
 
     @Autowired
     public BuildingService(BuildingRepository buildingRepository) {
@@ -45,6 +50,7 @@ public class BuildingService {
     }
 
     public void deleteBuilding(Building building) {
+        switchingDeviceService.findSwitchingDevicesByBuildingId(building.getId()).forEach(switchingDeviceResult -> switchingDeviceService.deleteDevice(switchingDeviceResult.getDevice()));
         buildingRepository.delete(building);
     }
 

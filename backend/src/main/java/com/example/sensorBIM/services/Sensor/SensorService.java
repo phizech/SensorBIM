@@ -30,11 +30,7 @@ public class SensorService {
     }
 
     public boolean isSavingSensorAllowed(Sensor sensor) {
-        return isSensorValid(sensor) && isSensorInInfluxDB(sensor) && isSensorUnique(sensor);
-    }
-
-    private boolean isSensorUnique(Sensor sensor) {
-        return sensorRepository.findSensorByInfluxIdentifierAndRoomId(sensor.getInfluxIdentifier(), sensor.getRoom().getId()) == null;
+        return isSensorValid(sensor) && isSensorInInfluxDB(sensor);
     }
 
     private boolean isSensorInInfluxDB(Sensor sensor) {
