@@ -260,7 +260,7 @@ export class SensorComponent implements OnInit, OnDestroy {
     if (this.date.untouched) {
       const d = new Date();
       d.setHours(d.getHours() - 1);
-      dateFrom = d.toISOString();
+      dateFrom = new Date().toISOString().slice(0, 10); //d.toISOString();
     } else {
       dateFrom = this.date.toString();
     }
