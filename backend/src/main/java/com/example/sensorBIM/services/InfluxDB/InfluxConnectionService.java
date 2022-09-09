@@ -64,7 +64,7 @@ public class InfluxConnectionService {
      * @param building    the building of which we want to get the measurements
      * @param sensor      the sensor of which we want to get the measurements
      * @param dateFrom    the date from which we want to get the measurements: from dateFrom until today
-     * @return a list of all the measurements or null, if there are not measurements
+     * @return a list of all the measurements or null, if there are no measurements
      */
     public List<MeasurePoint> queryInfluxDB(String measurement, Building building, Sensor sensor, String dateFrom) {
         try {
@@ -94,12 +94,20 @@ public class InfluxConnectionService {
      */
     private List<MeasurePoint> getData(List<FluxRecord> records) {
         List<MeasurePoint> measurements = new ArrayList<>();
+        String name;
+        TransmissionType transmissionType;
         for (FluxRecord record : records) {
-            Sensor sensor = getSensorFromLatestRecord(record);
+            if(record.getValues().containsKey("hardware_id")){
+                name = record.getValues().get("hardware_id").toString();
+                transmissionType = TransmissionType.CABLE_BOUND;
+            } else {
+                name = record.getValues().get("epc").toString();
+                transmissionType = TransmissionType.RDIF;
+            }
             measurements.add(
                     new MeasurePoint(
-                            sensor.getName(),
-                            sensor.getTransmissionType().getTransferType(),
+                            name,
+                            transmissionType.getTransferType(),
                             record.getTime(),
                             record.getStart(),
                             record.getStop(),

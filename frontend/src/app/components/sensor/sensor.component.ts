@@ -258,9 +258,7 @@ export class SensorComponent implements OnInit, OnDestroy {
   private async getMeasurementsForSensor(rounding, days, unit) {
     let dateFrom: string;
     if (this.date.untouched) {
-      const d = new Date();
-      d.setHours(d.getHours() - 1);
-      dateFrom = new Date().toISOString().slice(0, 10); //d.toISOString();
+      dateFrom = new Date().toISOString().slice(0, 10);
     } else {
       dateFrom = this.date.toString();
     }
@@ -279,7 +277,7 @@ export class SensorComponent implements OnInit, OnDestroy {
           }
 
         } else {
-          // this.notify.notify(ResponseStatus.WARNING, response.message);
+          this.notify.notify(ResponseStatus.WARNING, response.message);
         }
       });
       this.loading = false;

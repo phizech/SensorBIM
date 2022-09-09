@@ -42,8 +42,7 @@ public class InfluxResource {
         List<Response<Map<String, List<MeasurePoint>>>> responses = new ArrayList<>();
         for (Sensor sensor : sensors) {
             if (sensor == null) {
-                assert sensor != null;
-                responses.add(new Response<>(ResponseStatus.FAILURE, "Der Sensor " + sensor.getName() + " konnte nicht geladen werden.", null));
+                responses.add(new Response<>(ResponseStatus.FAILURE, "Der Sensor konnte nicht geladen werden.", null));
             } else {
                 List<MeasurePoint> measurements = influxConnectionService.queryInfluxDB(measurement, sensor.getRoom().getLevel().getBuilding(), sensor, dateFrom);
                 if (measurements == null) {
@@ -60,22 +59,14 @@ public class InfluxResource {
     }
 
     private List<Sensor> getSensorsInRoom(Long levelId, String roomName, String measurement) {
-        Collection<Sensor> list = sensorService.findSensorsByLevelIdAndRoomName(levelId, roomName);
         return sensorService.findSensorsByLevelIdAndRoomName(levelId, roomName).
                 stream().
-                filter(s -> test(s)).collect(Collectors.toList());
-        // filter(s -> isValid(s.getSensorType().getSensorTypeString(), measurement)).collect(Collectors.toList());
+                filter(s -> isValid(s.getSensorType().getSensorTypeString(), measurement)).collect(Collectors.toList());
 
-    }
-
-    public boolean test(Sensor s) {
-        String type = s.getSensorType().getSensorTypeString();
-        return true;
     }
 
     public boolean isValid(String sensorType, String measurement) {
-        boolean t = (sensorType.equalsIgnoreCase(measurement)) || (sensorType.equalsIgnoreCase(SensorType.MULTI.getSensorTypeString()));
-        return (sensorType.equals(measurement)) || (sensorType.equals(SensorType.MULTI.getSensorTypeString().toUpperCase()));
+        return (sensorType.toUpperCase().equals(measurement)) || (sensorType.equals(SensorType.MULTI.getSensorTypeString().toUpperCase()));
     }
 
     @GetMapping("/getLatestSensorMeasurements/{buildingId}/{levelId}/{roomName}/{selectedSensorType}")
