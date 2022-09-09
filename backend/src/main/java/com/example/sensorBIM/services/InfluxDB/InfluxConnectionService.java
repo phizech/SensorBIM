@@ -181,10 +181,29 @@ public class InfluxConnectionService {
         List<String> tables = new ArrayList<>();
         for (Map.Entry<String, String> entry : getSensorIdsOfSensorsInRoom(room).entrySet()) {
             tables.add(entry.getKey());
-            query.append(entry.getKey()).append(" = from(bucket: \"").append(entry.getKey()).append("\")\n").append("  |> range(start: -48h)\n").append("  |> filter(fn: (r) => r[\"_measurement\"] == \"").append(measurement.toLowerCase()).append("\")\n").append("  |> filter(fn: (r) => ").append(entry.getValue()).append(")\n").append("  |> last() \n");
+            query
+                    .append(entry.getKey())
+                    .append(" = from(bucket: \"")
+                    .append(entry.getKey())
+                    .append("\")\n")
+                    .append("  |> range(start: -48h)\n")
+                    .append("  |> filter(fn: (r) => r[\"_measurement\"] == \"")
+                    .append(measurement.toLowerCase())
+                    .append("\")\n")
+                    .append("  |> filter(fn: (r) => ")
+                    .append(entry.getValue())
+                    .append(")\n")
+                    .append("  |> filter(fn: (r) => r[\"_field\"] == \"value\")")
+                    .append("  |> last() \n");
         }
         if (tables.size() > 1) {
-            query.append("union(tables: [").append(String.join(", ", tables)).append("])\n").append("  |> filter(fn: (r) => r[\"_field\"] == \"value\")  \n").append("  |> filter(fn: (r) => r[\"valid\"] == \"True\")\n").append("|> group()");
+            query
+                    .append("union(tables: [")
+                    .append(String.join(", ", tables))
+                    .append("])\n")
+                    .append("  |> filter(fn: (r) => r[\"_field\"] == \"value\")  \n")
+                    .append("  |> filter(fn: (r) => r[\"valid\"] == \"True\")\n")
+                    .append("|> group()");
         } else {
             query.append(tables.get(0));
         }
@@ -196,10 +215,34 @@ public class InfluxConnectionService {
         List<String> tables = new ArrayList<>();
         for (Sensor s : room.getSensors()) {
             tables.add(s.getBucketName()+s.getId());
-            query.append(s.getBucketName()).append(s.getId()).append(" = from(bucket: \"").append(s.getBucketName()).append("\")\n").append("  |> range(start: -48h)\n").append("  |> filter(fn: (r) => r[\"_measurement\"] == \"").append(measurement.toLowerCase()).append("\")\n").append("  |> filter(fn: (r) => ").append("r[\"").append(getIdentifierInInflux(s)).append("\"] == \"").append(String.valueOf(s.getInfluxIdentifier())).append("\"").append(")\n").append("  |> last() \n");
+            query
+                    .append(s.getBucketName())
+                    .append(s.getId())
+                    .append(" = from(bucket: \"")
+                    .append(s.getBucketName())
+                    .append("\")\n")
+                    .append("  |> range(start: -48h)\n")
+                    .append("  |> filter(fn: (r) => r[\"_measurement\"] == \"")
+                    .append(measurement.toLowerCase())
+                    .append("\")\n")
+                    .append("  |> filter(fn: (r) => ")
+                    .append("r[\"")
+                    .append(getIdentifierInInflux(s))
+                    .append("\"] == \"")
+                    .append(String.valueOf(s.getInfluxIdentifier()))
+                    .append("\"")
+                    .append(")\n")
+                    .append("  |> filter(fn: (r) => r[\"_field\"] == \"value\")")
+                    .append("  |> last() \n");
         }
         if (tables.size() > 1) {
-            query.append("union(tables: [").append(String.join(", ", tables)).append("])\n").append("  |> filter(fn: (r) => r[\"_field\"] == \"value\")  \n").append("  |> filter(fn: (r) => r[\"valid\"] == \"True\")\n").append("|> group()");
+            query
+                    .append("union(tables: [")
+                    .append(String.join(", ", tables))
+                    .append("])\n")
+                    .append("  |> filter(fn: (r) => r[\"_field\"] == \"value\")  \n")
+                    .append("  |> filter(fn: (r) => r[\"valid\"] == \"True\")\n")
+                    .append("|> group()");
         } else {
             query.append(tables.get(0));
         }
