@@ -88,8 +88,7 @@ public class QueryService {
             errorMessage = "upload.file.invalidTurtle";
         } else if (levels.hasNext()) {
             if (buildingService.addBuilding(building) != null) {
-                Building finalBuilding = building;
-                levels.forEachRemaining(l -> saveLevelsToDB(l, finalBuilding));
+                levels.forEachRemaining(l -> saveLevelsToDB(l, building));
             } else {
                 errorMessage = "upload.failure";
             }
@@ -122,7 +121,7 @@ public class QueryService {
     private void activateController(Room room){
         for (SwitchingDevice switchingDevice : room.getSwitchingDevices()){
             if(switchingDevice != null){
-                SimpleController controller = new SimpleController(room.getTargetTemperature(), room, switchingDevice, influxConnectionService);
+                SimpleController controller = new SimpleController(room.getTargetTemperature(), room, switchingDevice, influxConnectionService, switchingDeviceService);
                 Timer timer = new Timer();
 
                 timer.scheduleAtFixedRate(new TimerTask() {
