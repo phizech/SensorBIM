@@ -23,7 +23,16 @@ public class MeasurePoint {
         this.stopTime = stopTime;
         this.measurement = measurement;
         this.value = value;
-        this.unit = unit;
+        this.unit = getUnitAsString((String) unit);
+    }
 
+    private String getUnitAsString(String unit) {
+        if(unit.contains("temp_celsius")){
+            return unit.replace("temp_celsius", "°C");
+        }
+        if(unit.contains("rel_hum")){
+            return unit.replace("rel_hum", "%rH");
+        }
+        return unit;
     }
 }
